@@ -24,7 +24,7 @@ function Navbar(props){
     const { data: usnm, loading, error } = UseFetch('/');
     // if (error) {                                 UNCOMMENT WHEN BACKEND IS READY
     //   console.log(error);
-    //   return (<Navigate to="/Registration" />);
+    //   return (<Navigate replace to="/Registration" />);
     // }
     return (
       <Box
