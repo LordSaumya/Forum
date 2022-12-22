@@ -36,12 +36,12 @@ export default function Registration() {
         <Divider width = "95%" />
         <br /><br />
         <Heading size = "lg" id = "Heading">Sign Up</Heading>
-        <box id = "signupContainer">
+        <Box id = "signupContainer">
         <SignUp />
-        </box>
-        <box id = "loginContainer" style = {{display:"none"}}>
+        </Box>
+        <Box id = "loginContainer" style = {{display:"none"}}>
         <Login />
-        </box>
+        </Box>
         <br />
         <p id = "loginText">
         Have an account? <Button variant = "link" color = "green.800" onClick = {() => changeTo("Login")}>Log in</Button>
@@ -57,13 +57,9 @@ export default function Registration() {
 function SignUp(){
     return(
         <Stack spacing={3} padding = "20px" width = "50%" boxShadow = "xl">
-            <FormControl id="first-name" isRequired>
-                <FormLabel>First name</FormLabel>
-                <Input placeholder="First name" />
-            </FormControl>
-            <FormControl id="last-name" isRequired>
-                <FormLabel>Last name</FormLabel>
-                <Input placeholder="Last name" />
+            <FormControl id="username" isRequired>
+                <FormLabel>Username</FormLabel>
+                <Input placeholder="Username" />
             </FormControl>
             <FormControl id="email" isRequired>
                 <FormLabel>Email address</FormLabel>

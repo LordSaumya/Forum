@@ -21,11 +21,15 @@ import {
   import LogoImage from './logo.png';
 
 function Navbar(props){
-    const { data: usnm, loading, error } = UseFetch('/');
-    // if (error) {                                 UNCOMMENT WHEN BACKEND IS READY
-    //   console.log(error);
-    //   return (<Navigate replace to="/Registration" />);
-    // }
+    function NavProfUsername(){
+      if (document.cookie.split(';').some((item) => item.trim().startsWith('username='))) {
+        return document.cookie.split('; ').find(row => row.startsWith('username')).split('=')[1];
+      }
+      else{
+        //return (<Navigate replace to="/Registration" />);
+      }
+    }
+
     return (
       <Box
         as="section"
@@ -53,7 +57,7 @@ function Navbar(props){
                   </ButtonGroup>
                   <HStack spacing="3">
                   <ColorModeSwitcher justifySelf="flex-end" />
-                    <Button variant="ghost"><NavProf UserName = {loading ? 'Loading...' :  error ? 'we are currently facing errors. Sorry' : usnm}/></Button>
+                    <Button variant="ghost"><NavProf UserName = {NavProfUsername()}/></Button>
                   </HStack>
                 </Flex>
             </HStack>
