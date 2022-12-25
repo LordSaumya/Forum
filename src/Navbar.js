@@ -15,21 +15,13 @@ import {
     Flex,
     HStack,
   } from '@chakra-ui/react';
+  import { useState } from 'react';
   import { ColorModeSwitcher } from './ColorModeSwitcher';
   import { Navigate } from 'react-router-dom';
-  import UseFetch from './UseFetch';
   import LogoImage from './logo.png';
+  import { useSelector, useDispatch } from 'react-redux';
 
 function Navbar(props){
-    function NavProfUsername(){
-      if (document.cookie.split(';').some((item) => item.trim().startsWith('username='))) {
-        return document.cookie.split('; ').find(row => row.startsWith('username')).split('=')[1];
-      }
-      else{
-        //return (<Navigate replace to="/Registration" />);
-      }
-    }
-
     return (
       <Box
         as="section"
@@ -57,7 +49,7 @@ function Navbar(props){
                   </ButtonGroup>
                   <HStack spacing="3">
                   <ColorModeSwitcher justifySelf="flex-end" />
-                    <Button variant="ghost"><NavProf UserName = {NavProfUsername()}/></Button>
+                    <NavProf />
                   </HStack>
                 </Flex>
             </HStack>
@@ -67,10 +59,39 @@ function Navbar(props){
     );
   }
   
-  function NavProf(props){
-    return (
-        <a href = "./ProfilePage"><Text fontSize="sm" fontWeight="medium" color="gray.500">Hello, {props.UserName}!</Text></a>
-    );
+  function NavProf(){
+    const dispatch = useDispatch();
+    const [isHovering, setIsHovering] = useState(false);
+    const handleMouseOver = () => {
+      setIsHovering(true);
+    };
+  
+    const handleMouseOut = () => {
+      setIsHovering(false);
+    };
+    const username = useSelector(state => state.username);
+    
+    const logOut = () => {
+      if (window.confirm("Are you sure you want to log out?")){
+      const action = {type: "LOGOUT"};
+            dispatch(action);
+            try{
+            Navigate("/");
+            }
+            catch(e){
+            console.log(e);
+        }
+      }
+    }
+
+    if (!username) {
+      return (<Navigate replace to = "/Registration" />);
+    }
+    else {
+      return (<Button variant="ghost" onMouseOver = {handleMouseOver} onMouseOut = {handleMouseOut} onClick = {logOut} width = "150px" overflow = "auto">
+        <Text fontSize="sm" fontWeight="medium" color="gray.500">{isHovering ? "Log out?" : "Hello, " + username + "!"}</Text>
+        </Button>);
+      }
   }
 
   export default Navbar;

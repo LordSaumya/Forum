@@ -18,15 +18,14 @@ import {
     Flex,
     HStack,
   } from '@chakra-ui/react';
-import { json } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export default function Home() {
-    const data = UseFetch('http://localhost:4000/users/1');
-    const username = data ? data.username : "Loading";
+    
     return(
     <Box>
     <Navbar currentPage = "home" />
-    {username}
+    {useSelector(state => state.username)}
     </Box>
     );
 }
