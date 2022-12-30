@@ -76,8 +76,9 @@ function SignUp(){
     const usedUsernames = userData ? userData.map((user) => user.username) : [];
     console.log(usedUsernames);
     const usedEmails = userData ? userData.map((user) => user.email) : [];
+
     function signupRedux(data) {
-        const action = {type: "LOGIN", username: data.username};
+        const action = {type: "LOGIN", username: data.username, id: data.id};
         console.log(data.username);
         dispatch(action);
         try{
@@ -176,13 +177,13 @@ function Login(){
     const handlePasswordChange = (event) => {
         setPasswordInput(event.target.value);
     }
-    const isPasswordError = !userData || passwordInput.length === 0 || (userData[0] && !bcrypt.compareSync(passwordInput, userData[0].password));
+    const isPasswordError = isUsernameError || passwordInput.length === 0 || (userData[0] && !bcrypt.compareSync(passwordInput, userData[0].password));
 
     const handleSubmit = (event) => {
         console.log("Submitted");
         event.preventDefault();
         if (!isUsernameError && !isPasswordError){
-            const action = {type: "LOGIN", username: usernameInput};
+            const action = {type: "LOGIN", username: usernameInput, id: userData[0].id};
             console.log(usernameInput);
             dispatch(action);
             try{
