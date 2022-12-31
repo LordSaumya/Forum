@@ -11,6 +11,8 @@ import Home from "./Home";
 // import About from "./About";
 import Profile from "./ProfilePage";
 import Registration from "./Registration";
+import Thread from "./Thread";
+//import EditThread from './EditThread';
 import { persistor, store } from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -24,6 +26,9 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/ProfilePage" element={<Profile />} />
         <Route path="/Registration" element={<Registration />} />
+        <Route path="/Threads/:id" element={<Thread />} />
+        {/* <Route path="/edit_thread/:id" element={<EditThread />} /> */}
+        <Route path= "*" element = {<Home />} />
       </Routes>
     </BrowserRouter>
     </ChakraProvider>

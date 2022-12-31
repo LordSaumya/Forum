@@ -16,6 +16,7 @@ import {
     Badge,
     VStack,
     Code,
+    Select,
     Grid,
     IconButton,
     theme,
@@ -36,7 +37,7 @@ import {
     Input,
   } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import {CheckIcon, WarningIcon, AddIcon, ChatIcon, Search2Icon} from '@chakra-ui/icons';
+import {CheckIcon, WarningIcon, AddIcon, ChatIcon, RepeatIcon, Search2Icon} from '@chakra-ui/icons';
 
 function ThreadForm() {
     const [desc, setDesc] = useState("");
@@ -110,19 +111,19 @@ function ThreadContainer(props){
 
     return(
         <LazyLoad height={200}>
-        <Container boxShadow="md" minWidth = "80%" padding = "10px" name = "threadContainer">
+        <Container boxShadow="md" minWidth = "80%" padding = "10px" name = "threadContainer" marginBottom = "10px">
             <Badge ml='1' colorScheme='green' float = "right" name = "threadTag">
                 {props.tag}
             </Badge>
-            <Heading size = "md" name = "threadTitle">{props.title}</Heading>
+            <a href = {"./Threads/" + props.id}><Heading size = "md" name = "threadTitle">{props.title}</Heading>
             <Text fontSize = "sm" color = "gray.500">Posted by {username ? username.username : "Loading..."} {timeAgo}</Text>
             <Divider padding = "10px" /><br />
             <Collapse startingHeight = "80px" in = {show} padding = "10px" dangerouslySetInnerHTML={{ __html: props.desc }} name = "threadDesc">
             </Collapse>
+            </a>
             <Button size='sm' onClick={handleToggle} mt='1rem'>
                 Show {show ? 'less' : 'all'}
             </Button>
-            <br /><br />
         </Container>
         </LazyLoad>
     );
@@ -141,6 +142,21 @@ export default function Home() {
         setShowThreads(!showThreads)
     }
     const threadsData = UseFetch("http://localhost:4000/forum_threads");
+    const [sort_by, setSort_by] = React.useState("date");
+    const [reverse, setReverse] = React.useState(false);
+
+    const sortedThreads = threadsData ? threadsData.sort((a, b) => {
+        if (sort_by === "date") {
+            return reverse ? new Date(b.created_at) - new Date(a.created_at) : new Date(a.created_at) - new Date(b.created_at);
+        } else if (sort_by === "title") {
+            return reverse ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
+        } else if (sort_by === "tag") {
+            return reverse ? a.tag.localeCompare(b.tag) : b.tag.localeCompare(a.tag);
+        }
+        else{
+            return threadsData;
+        }
+    }) : null;
 
     function Search(item){
         var thread = document.getElementsByName("threadContainer");
@@ -166,6 +182,17 @@ export default function Home() {
           }
         }
 
+        const [visible, setVisible] = useState(false)
+        const toggleVisible = () => {
+            const scrolled = document.documentElement.scrollTop;
+            if (scrolled > 300){
+                setVisible(true)
+            }
+            else if (scrolled <= 300){
+                setVisible(false)
+            }
+        }
+        window.addEventListener('scroll', toggleVisible);
     return( 
     <Box>
     <Navbar currentPage = "home" />
@@ -180,10 +207,17 @@ export default function Home() {
     </Box>
     </Collapse>
     <Collapse in = {showThreads} animateOpacity>
-    <Box align = "center"><Search2Icon />&nbsp;&nbsp;<Input width = "50%" id = "search" placeholder = "Search for a thread" onChange = {(e) => Search(e.target.value)} /></Box>< br/>
+    <Box align = "center" style = {{display:"flex", justifyContent: "center", gap: "10px", verticalAlign:"middle"}}><Search2Icon />&nbsp;&nbsp;<Input width = "50%" id = "search" placeholder = "Search for a thread" onChange = {(e) => Search(e.target.value)} />
+    <Select id = "sort" onChange = {(e) => setSort_by(e.target.value)} width = "9%">
+        <option value = "date">Date</option>
+        <option value = "title">Title</option>
+        <option value = "tag">Tag</option>
+    </Select>
+    <Button onClick = {() => setReverse(!reverse)}><RepeatIcon /></Button>
+    </Box>< br/>
     <Box align = "center" id = "noResults" style = {{display:"none"}}><Text>No results found</Text></Box>
-        {threadsData ? threadsData.map((thread) => <ThreadContainer date = {thread.created_at} user_id = {thread.User_id} key = {thread.id} title = {thread.title} desc = {thread.description} tag = {thread.tag} />) : (<Box align = "center"><Spinner size = "xl" /></Box>)}
-    <br /><Box align = "center"><Button onClick = {() => window.scrollTo({top: 0, behavior: "smooth"})}><FaArrowCircleUp />Scroll to Top</Button></Box>
+        {sortedThreads ? sortedThreads.map((thread) => <ThreadContainer id = {thread.id} date = {thread.created_at} user_id = {thread.User_id} key = {thread.id} title = {thread.title} desc = {thread.description} tag = {thread.tag} />) : (<Box align = "center"><Spinner size = "xl" /></Box>)}
+    <br /><Box align = "center" float = "left" style = {{display:"inline"}}><Button id = "scrollToTopBtn" bottom = "10px" position = "fixed" onClick = {() => window.scrollTo({top: 0, behavior: "smooth"})} style = {{display:visible ? "inline" : "none"}}><FaArrowCircleUp style = {{display:"inline"}} />&nbsp;Scroll to Top</Button></Box>
     </Collapse>
     </Box>
     );

@@ -183,6 +183,7 @@ function Login(){
         console.log("Submitted");
         event.preventDefault();
         if (!isUsernameError && !isPasswordError){
+            console.log(userData[0].id)
             const action = {type: "LOGIN", username: usernameInput, id: userData[0].id};
             console.log(usernameInput);
             dispatch(action);
