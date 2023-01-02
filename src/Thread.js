@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
@@ -23,6 +23,7 @@ import {
     Button,
     ButtonGroup,
     Container,
+    useToast,
     Flex,
     HStack,
     LightMode,
@@ -37,18 +38,21 @@ import {
     Input,
   } from '@chakra-ui/react';
 import store from './store.js';
+import 'react-quill/dist/quill.snow.css';
 import { useSelector } from 'react-redux';
-import {CheckIcon, WarningIcon, ChatIcon, RepeatIcon, Search2Icon, CloseIcon} from '@chakra-ui/icons';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import {CheckIcon, WarningIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon, CloseIcon} from '@chakra-ui/icons';
+import { useParams, useNavigate, Navigate, useLocation } from 'react-router-dom';
 
 function CommentForm() {
+    const navigate = useNavigate();
     const [content, setContent] = useState("");
-    const isContentError = !(content.replace(/(<([^>]+)>)/gi, "").length > 50);
+    const isContentError = !(content.replace(/(<([^>]+)>)/gi, "").length > 20);
 
     const user_id = useSelector(state => state.id);
     const threadID = useParams().id;
 
     const handleCreateComment = (event) => {
+        if (!isContentError){
         event.preventDefault();
         console.log(content);
         const requestOptions = {
@@ -58,14 +62,18 @@ function CommentForm() {
         };
         fetch('http://localhost:4000/forum_threads/' + threadID + "/comments", requestOptions)
             .then(response => response.json())
-            .then(data => refreshPage(data))
+            .then(data => refreshCreate(data))
             .catch(err => console.log(err));
+    } else {
+        event.preventDefault();
+        window.alert("Error: Please enter a longer comment");
+    }
     }
 
-    const refreshPage = (data) => {
+    const refreshCreate = (data) => {
         console.log("Refreshing page")
         console.log(data);
-        window.location.reload();
+        navigate("/ParamNavigator", {state: {typeNotification: "commentCreated", page: "threads/" + threadID}});
     }
 
     return(
@@ -78,7 +86,7 @@ function CommentForm() {
                 {!(isContentError) ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp; Nice!</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer comment</FormErrorMessage>)}
         </FormControl>
         <br />
-        <Button type = "submit" colorScheme="blue">Post Comment</Button>
+        <Button colorScheme={isContentError ? "red" : "green"} type = "submit" disabled = {isContentError}>Post Comment</Button>
         </form>
         </Container>
     );
@@ -93,7 +101,7 @@ function ThreadContainer(props){
 
     const redirectDelete = (data) => {
         console.log(data);
-        Navigate("/");
+        Navigate("/", {state: {typeNotification: "threadDeleted"}});
     }
 
     const handleDelete = (event) => {
@@ -110,8 +118,8 @@ function ThreadContainer(props){
             .catch(err => console.log(err));
     }
 }
-
     return(
+    <div className='ql-editor' style = {{margin:"0px", padding:"0px"}}>
         <Container boxShadow="md" minWidth = "90%" padding = "10px" name = "threadContainer" marginBottom = "10px">
             <Badge ml='1' colorScheme='green' float = "right" name = "threadTag">
                 {props.tag}
@@ -124,30 +132,63 @@ function ThreadContainer(props){
             <Button size='sm' onClick={handleToggle} mt='1rem'>
                 Show {show ? 'less' : 'all'}
             </Button>
-            {console.log(props.User_id + " , " + useSelector(state => state.id))}
             {props.User_id === useSelector(state => state.id) ? (
             <>
             <Divider padding = "10px" />
             <Box display = "flex" justifyContent = "center" gap = "3%" margin = "10px">
             <Button colorScheme="red" onClick = {handleDelete}>Delete Thread</Button>
-            <Button colorScheme="blue" onClick = {() => Navigate("/edit_thread/" + props.id)}>Edit Thread</Button>
+            <Button colorScheme="blue" onClick = {() => Navigate("/editThread/" + props.id)}>Edit Thread</Button>
             </Box>
             </>
             ) : (<></>)}
         </Container>
+        </div>
     );
 }
 
 function CommentContainer(props){
+    const Navigate = useNavigate();
+    const location = useLocation();
     const timeAgo = moment(props.date).fromNow();
-    const username = UseFetch("http://localhost:4000/users/" + props.user_id);
+    const author = UseFetch("http://localhost:4000/users/" + props.user_id);
+
+    const refreshDelete = (data) => {
+        console.log(data);
+        Navigate("/ParamNavigator", {state: {typeNotification: "commentDeleted", page: "threads/" + props.threadID}});
+    }
+
+    const handleDelete = (event) => {
+        console.log(props.id)
+        if (window.confirm("Are you sure you want to delete this comment?")) {
+            event.preventDefault();
+            const requestOptions = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+        };
+        fetch("http://localhost:4000/forum_threads/" + props.threadID + "/comments/" + props.id, requestOptions)
+            .then(response => response.json())
+            .then(data => refreshDelete(data))
+            .catch(err => console.log(err));
+    }
+}
+
+
     return(
         <LazyLoad height={200}>
         <Container boxShadow="md" minWidth = "80%" padding = "10px" name = "commentContainer" marginBottom = "10px">
-            <Text fontSize = "sm" color = "gray.500">Posted by {username ? username.username : "Loading..."} {timeAgo}</Text>
+            <Text fontSize = "sm" color = "gray.500">Posted by {author ? author.username : "Loading..."} {timeAgo}</Text>
             <Divider padding = "10px" />
             <Box padding = "10px" dangerouslySetInnerHTML={{ __html: props.content }} name = "commentContent">
             </Box>
+            {props.user_id === useSelector(state => state.id) ? (
+            <>
+            <Divider padding = "10px" />
+            <Box display = "flex" justifyContent = "center" gap = "3%" margin = "10px">
+            <Button colorScheme="red" onClick = {handleDelete}>Delete comment</Button>
+            <Button colorScheme="blue" onClick = {() => Navigate("/editComment/" + props.threadID + ":" + props.id)}>Edit comment</Button>
+            </Box>
+            </>
+            ) : (<></>)}
         </Container>
         </LazyLoad>
     );
@@ -158,6 +199,48 @@ export default function Thread() {
     const threadID = useParams().id;
     const [showForm, setShowForm] = React.useState(false)
     const thread = UseFetch("http://localhost:4000/forum_threads/" + threadID);
+    const toast = useToast();
+    const location = useLocation();
+    let notif = location.state ? location.state.typeNotification : null;
+
+    useEffect(() => {
+        if (notif){
+            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
+            if (notif === "threadCreated"){
+                toastTitle = "Thread created";
+                toastDesc = "Your thread is live!";
+                toastStatus = "success";
+            } else if (notif === "threadEdited"){
+                toastTitle = "Thread edited";
+                toastDesc = "Your thread has been edited!";
+                toastStatus = "success";
+            } else if (notif === "commentEdited"){
+                toastTitle = "Comment edited";
+                toastDesc = "Your comment has been edited!";
+                toastStatus = "success";
+            } else if (notif === "changesDiscarded"){
+                toastTitle = "Changes discarded";
+                toastDesc = "Your changes have been discarded";
+                toastStatus = "error";
+            } else if (notif === "commentDeleted"){
+                toastTitle = "Comment deleted";
+                toastDesc = "Your comment has been deleted";
+                toastStatus = "error";
+            } else if (notif === "commentCreated"){
+                toastTitle = "Comment created";
+                toastDesc = "Your comment has been posted";
+                toastStatus = "success";
+            }
+            toast({
+                title: toastTitle,
+                description: toastDesc,
+                status: toastStatus,
+                duration: 5000,
+                isClosable: true,
+                });
+            notif = null;
+        }
+    }, []);
 
     let btnText = showForm
     ? (<Text style = {{display:"inline"}}><CloseIcon style = {{display:"inline"}} /><Text style = {{display:"inline"}}>&nbsp;&nbsp;Close editor</Text></Text>) 
@@ -218,14 +301,14 @@ export default function Thread() {
     <Box>
     <Navbar currentPage = "home" />
     <Box id = "threadContainer">
-    {thread ? <ThreadContainer date = {thread.created_at} title = {thread.title} desc = {thread.description} tag = {thread.tag} User_id = {thread.User_id} id = {thread.id} /> : <Text>Loading...</Text>}
+    {thread ? <ThreadContainer date = {thread.created_at} title = {thread.title} desc = {thread.description} tag = {thread.tag} User_id = {thread.User_id} id = {thread.id} /> : <Box align = "center"><Spinner size = "xl" /></Box>}
     </Box><br />
     <Box align = "center" style = {{display:"flex", justifyContent: "center", gap: "10px", verticalAlign:"middle"}}><Search2Icon />&nbsp;&nbsp;<Input width = "50%" id = "search" placeholder = "Search for a comment" onChange = {(e) => Search(e.target.value)} />
     <Select id = "sort" onChange = {(e) => setSort_by(e.target.value)} width = "9%">
         <option value = "date">Date</option>
         <option value = "content">Content</option>
     </Select>
-    <Button onClick = {() => setReverse(!reverse)}><RepeatIcon /></Button>
+    <Button onClick = {() => setReverse(!reverse)}>{reverse ? <TriangleUpIcon /> : <TriangleDownIcon />}</Button>
     </Box>< br/>
     <Box align = "center">
     <Button id = "toggleButton" colorScheme='cyan' onClick = {handleToggle} top = "0px" margin = "10px">
@@ -238,7 +321,7 @@ export default function Thread() {
     </Box>
     </Collapse>
     <Box align = "center" id = "noResults" style = {{display:"none"}}><Text>No results found</Text></Box>
-        {sortedComments ? sortedComments.map((com) => <CommentContainer id = {com.id} date = {com.created_at} user_id = {com.User_id} key = {com.id} content = {com.content} />) : (<Box align = "center"><Spinner size = "xl" /></Box>)}
+        {sortedComments ? sortedComments.map((com) => <CommentContainer id = {com.id} date = {com.created_at} user_id = {com.User_id} key = {com.id} content = {com.content} threadID = {com.ForumThread_id} />) : (<Box align = "center"><Spinner size = "xl" /></Box>)}
     <br /><Box align = "center" float = "left" style = {{display:"inline"}}><Button id = "scrollToTopBtn" bottom = "10px" position = "fixed" onClick = {() => window.scrollTo({top: 0, behavior: "smooth"})} style = {{display:visible ? "inline" : "none"}}><FaArrowCircleUp style = {{display:"inline"}} />&nbsp;Scroll to Top</Button></Box>
     </Box>
     );

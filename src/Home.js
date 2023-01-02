@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
@@ -6,6 +6,7 @@ import Editor from './Editor.js';
 import LazyLoad from 'react-lazyload';
 import moment from 'moment';
 import {FaArrowCircleUp} from 'react-icons/fa';
+import 'react-quill/dist/quill.snow.css';
 import {
     useColorModeValue,
     useMediaQuery,
@@ -35,14 +36,19 @@ import {
     FormHelperText,
     Collapse,
     Input,
+    useToast,
+    Toast,
   } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import {CheckIcon, WarningIcon, AddIcon, ChatIcon, RepeatIcon, Search2Icon} from '@chakra-ui/icons';
+import 'react-quill/dist/quill.snow.css';
+import {CheckIcon, WarningIcon, AddIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon} from '@chakra-ui/icons';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 function ThreadForm() {
     const [desc, setDesc] = useState("");
     const [title, setTitle] = useState("");
     const [tag, setTag] = useState("");
+    const Navigate = useNavigate();
 
     const threadsData = UseFetch("http://localhost:4000/forum_threads");
     let usedTags = threadsData ? threadsData.map((thread) => thread.tag) : [];
@@ -69,7 +75,7 @@ function ThreadForm() {
 
     const refreshPage = (data) => {
         console.log(data);
-        window.location.reload();
+        Navigate("/threads/" + data.id, {state: {typeNotification: "threadCreated"}});
     }
 
     return(
@@ -93,11 +99,11 @@ function ThreadForm() {
                 {!(isTagError) ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp; Great tag!</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a tag</FormErrorMessage>)}
                 <br />Existing Tags:<br />
                 <div style = {{overflowX:"scroll", whiteSpace: "nowrap", maxWidth: "80%", justifyContent: "center", display:"inline-block"}}>
-                {usedTags.map((tag) => <Button margin = "5px" colorScheme = "green" key = {tag} onClick = {() => setTag(tag)}>{tag}</Button>)}
+                {usedTags.map((tag) => <Button margin = "5px" colorScheme = "blue" key = {tag} onClick = {() => setTag(tag)}>{tag}</Button>)}
                 </div>
         </FormControl>
         <br />
-        <Button type = "submit" colorScheme="blue">Post Thread</Button>
+        <Button type = "submit" colorScheme={isTitleError || isDescError || isTagError ? "red" : "green"} disabled = {isTitleError || isDescError || isTagError}>Post Thread</Button>
         </form>
         </Container>
     );
@@ -110,7 +116,8 @@ function ThreadContainer(props){
     const handleToggle = () => setShow(!show)
 
     return(
-        <LazyLoad height={200}>
+        <LazyLoad>
+        <div className='ql-editor' style = {{margin:"0px", padding:"0px"}}>
         <Container boxShadow="md" minWidth = "80%" padding = "10px" name = "threadContainer" marginBottom = "10px">
             <Badge ml='1' colorScheme='green' float = "right" name = "threadTag">
                 {props.tag}
@@ -125,12 +132,48 @@ function ThreadContainer(props){
                 Show {show ? 'less' : 'all'}
             </Button>
         </Container>
+        </div>
         </LazyLoad>
     );
 }
 
 
 export default function Home() {
+    const toast = useToast();
+    const location = useLocation();
+    let notif = location.state ? location.state.typeNotification : null;
+
+    useEffect(() => {
+        if (notif){
+            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
+            if (notif === "accountCreated"){
+                toastTitle = "Account created.";
+                toastDesc = "Your account has been created";
+                toastStatus = "success";
+            } else if (notif === "loggedIn"){
+                toastTitle = "Logged in.";
+                toastDesc = "You are now logged in.";
+                toastStatus = "success";
+            } else if (notif === "threadDeleted"){
+                toastTitle = "Thread deleted.";
+                toastDesc = "The thread has been deleted.";
+                toastStatus = "error";
+            } else if (notif === "ERROR"){
+                toastTitle = "Error";
+                toastDesc = "An unknown error has occured.";
+                toastStatus = "error";
+            }
+            toast({
+                title: toastTitle,
+                description: toastDesc,
+                status: toastStatus,
+                duration: 5000,
+                isClosable: true,
+                });
+            notif = null;
+        }
+    }, []);
+
     const [showForm, setShowForm] = React.useState(false)
     const [showThreads, setShowThreads] = React.useState(true)
     let btnText = showThreads
@@ -213,7 +256,7 @@ export default function Home() {
         <option value = "title">Title</option>
         <option value = "tag">Tag</option>
     </Select>
-    <Button onClick = {() => setReverse(!reverse)}><RepeatIcon /></Button>
+    <Button onClick = {() => setReverse(!reverse)}>{reverse ? <TriangleUpIcon /> : <TriangleDownIcon />}</Button>
     </Box>< br/>
     <Box align = "center" id = "noResults" style = {{display:"none"}}><Text>No results found</Text></Box>
         {sortedThreads ? sortedThreads.map((thread) => <ThreadContainer id = {thread.id} date = {thread.created_at} user_id = {thread.User_id} key = {thread.id} title = {thread.title} desc = {thread.description} tag = {thread.tag} />) : (<Box align = "center"><Spinner size = "xl" /></Box>)}

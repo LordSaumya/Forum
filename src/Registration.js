@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {store} from './store';
 import { useSelector } from 'react-redux';
 import {
@@ -24,6 +24,7 @@ import {
     Flex,
     Switch,
     HStack,
+    useToast,
     Heading,
     Divider,
     FormErrorMessage,    
@@ -33,14 +34,42 @@ import {
   import UseFetch from './UseFetch';
   import { ColorModeSwitcher } from './ColorModeSwitcher';
   import { useDispatch } from 'react-redux';
-  import { useNavigate, Navigate } from 'react-router-dom'; 
+  import { useNavigate, Navigate, useLocation } from 'react-router-dom'; 
 
   const bcrypt = require('bcryptjs');
 
 export default function Registration() {
+    const toast = useToast();
+    const location = useLocation();
+    let notif = location.state ? location.state.typeNotification : null;
+    useEffect(() => {
+        if (notif){
+            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
+            if (notif === "loggedOut"){
+                toastTitle = "Logged out.";
+                toastDesc = "You have succesfully logged out.";
+                toastStatus = "success";
+            } else if (notif === "notLoggedIn"){
+                toastTitle = "Not logged in.";
+                toastDesc = "You are not logged in.";
+                toastStatus = "error";
+            } else if (notif === "ERROR"){
+                toastTitle = "Error";
+                toastDesc = "An unknown error has occured.";
+                toastStatus = "error";
+            }
+            toast({
+                title: toastTitle,
+                description: toastDesc,
+                status: toastStatus,
+                duration: 5000,
+                isClosable: true,
+                });
+            notif = null;
+        }
+    }, []);
     return(
     <Box align = "center">
-        {useSelector(state => state.username) && <Navigate replace to = "/" />}
         <Flex width = "100%" justify = "center" margin = "20px" align = "center"><img style = {{verticalAlign: "centre"}} src = {LogoImage} alt = "Logo" width = "90px"/><Heading size = "2xl" margin = "20px">HighGear</Heading>
         <ColorModeSwitcher marginLeft = "auto" marginRight = "50px"/></Flex>
         <Divider width = "95%" />
@@ -82,7 +111,7 @@ function SignUp(){
         console.log(data.username);
         dispatch(action);
         try{
-            Navigate("/");
+            Navigate("/", {state: {typeNotification: "accountCreated"}});
         }
         catch(e){
             console.log(e);
@@ -92,7 +121,7 @@ function SignUp(){
     const handleUsernameChange = (event) => {
         setUsernameInput(event.target.value);
     }
-    const isUsernameError = usernameInput === "" || usedUsernames.includes(usernameInput);
+    const isUsernameError = !userData || usernameInput === "" || usedUsernames.includes(usernameInput);
 
     const handleEmailChange = (event) => {
         setEmailInput(event.target.value);
@@ -112,7 +141,7 @@ function SignUp(){
     const handleSubmit = (event) => {
         console.log("Submitted");
         event.preventDefault();
-        if (passwordInput === confirmPasswordInput){
+        if (!isPasswordError && !isConfirmPasswordError && !isEmailError && !isUsernameError){
             const salt = bcrypt.genSaltSync(10);
             const hash = bcrypt.hashSync(passwordInput, salt);
             const requestOptions = {
@@ -126,7 +155,7 @@ function SignUp(){
                 .catch((e) => {console.log(JSON.stringify(e))});
         }
         else{
-            alert("Passwords do not match");
+            alert("One or more inputs are invalid. Please check your credentials and try again.");
         }
     }
     return(
@@ -188,14 +217,14 @@ function Login(){
             console.log(usernameInput);
             dispatch(action);
             try{
-            Navigate("/");
+            Navigate("/", {state: {typeNotification: "loggedIn"}});
             }
             catch(e){
             console.log(e);
         }
         }
         else{
-            alert("Password is incorrect");
+            alert("One or more inputs are invalid. Please check your credentials and try again.");
         }
     }
     return(

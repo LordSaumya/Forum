@@ -17,11 +17,13 @@ import {
   } from '@chakra-ui/react';
   import { useState } from 'react';
   import { ColorModeSwitcher } from './ColorModeSwitcher';
-  import { Navigate } from 'react-router-dom';
+  import { Navigate, useNavigate } from 'react-router-dom';
   import LogoImage from './logo.png';
   import { useSelector, useDispatch } from 'react-redux';
 
 function Navbar(props){
+  const username = useSelector(state => state.username);
+  const profPageLink = "/ProfilePage/" + username;
     return (
       <Box
         as="section"
@@ -44,8 +46,8 @@ function Navbar(props){
               <img src = {LogoImage} alt = "Logo" width = "50px"/>
               <Flex justify="space-between" flex="1">
                   <ButtonGroup variant="ghost" spacing="8">
-                  <a href = "./"><Button variant = {props.currentPage === "home" ? "solid" : "ghost"}>Home</Button></a>
-                  <a href = "./ProfilePage"><Button variant = {props.currentPage === "profile" ? "solid" : "ghost"}>Profile</Button></a>
+                  <a href = "/"><Button variant = {props.currentPage === "home" ? "solid" : "ghost"}>Home</Button></a>
+                  <a href = {profPageLink}><Button variant = {props.currentPage === "profile" ? "solid" : "ghost"}>Profile</Button></a>
                   </ButtonGroup>
                   <HStack spacing="3">
                   <ColorModeSwitcher justifySelf="flex-end" />
@@ -60,6 +62,7 @@ function Navbar(props){
   }
   
   function NavProf(){
+    const Navigate = useNavigate();
     const dispatch = useDispatch();
     const [isHovering, setIsHovering] = useState(false);
     const handleMouseOver = () => {
@@ -76,7 +79,7 @@ function Navbar(props){
       const action = {type: "LOGOUT"};
             dispatch(action);
             try{
-            Navigate("/");
+            Navigate("/Registration", {state: {typeNotification: "loggedOut"}});
             }
             catch(e){
             console.log(e);
@@ -85,7 +88,8 @@ function Navbar(props){
     }
 
     if (!username) {
-      return (<Navigate replace to = "/Registration" />);
+      Navigate("/Registration", {state: {typeNotification: "notLoggedIn"}})
+      return(<></>);
     }
     else {
       return (<Button variant="ghost" onMouseOver = {handleMouseOver} onMouseOut = {handleMouseOut} onClick = {logOut} width = "150px" overflow = "auto">
