@@ -4,7 +4,7 @@ import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
 import Editor from './Editor.js';
 import moment from 'moment';
-import {FaArrowCircleUp} from 'react-icons/fa';
+import { FaArrowCircleUp } from 'react-icons/fa';
 import {
     useColorModeValue,
     useMediaQuery,
@@ -34,10 +34,10 @@ import {
     FormHelperText,
     Collapse,
     Input,
-  } from '@chakra-ui/react';
+} from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import {CheckIcon, WarningIcon, AddIcon, ChatIcon, RepeatIcon, Search2Icon} from '@chakra-ui/icons';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { CheckIcon, WarningIcon, AddIcon, ChatIcon, RepeatIcon, Search2Icon } from '@chakra-ui/icons';
+import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 
 function ThreadForm(props) {
     const Navigate = useNavigate();
@@ -53,7 +53,7 @@ function ThreadForm(props) {
     const isDescError = !(desc.replace(/(<([^>]+)>)/gi, "").length > 50);
     const isTagError = tag === "";
     const user_id = useSelector(state => state.id);
-    
+
     const handleUpdateThread = (event) => {
         event.preventDefault();
         const data = {
@@ -69,73 +69,74 @@ function ThreadForm(props) {
             },
             body: JSON.stringify(data),
         })
-        .then((response) => response.json())
-        .then((data) => {redirectUpdate(data);})
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+            .then((response) => response.json())
+            .then((data) => { redirectUpdate(data); })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     const redirectUpdate = (data) => {
         console.log(data);
-        Navigate("/threads/" + props.id, {state: {typeNotification: "threadEdited"}});
+        Navigate("/threads/" + props.id, { state: { typeNotification: "threadEdited" } });
     }
 
-    return(
-        <Container minWidth="80%" padding = "0">
-        <form onSubmit = {handleUpdateThread}>
-        <FormControl id = "title" label = "Please enter a title for your thread" isInvalid = {isTitleError} isRequired>
-                <FormLabel>Title</FormLabel>
-                <Input placeholder = "Title of your thread" value = {title} onChange = {(e) => setTitle(e.target.value)}/>
-                {!(isTitleError) ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp; Great title!</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer title</FormErrorMessage>)}
-        </FormControl>
-        <br />
-        <FormControl id = "description" label = "Please enter a description of the thread" isInvalid = {isDescError} isRequired>
-                <FormLabel>Description</FormLabel>
-                <Editor value = {desc} onChange = {setDesc}/>
-                {!(isDescError) ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp; Nice!</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer description</FormErrorMessage>)}
-        </FormControl>
-        <br />
-        <FormControl id = "tag" label = "Please enter a tag for your thread" isInvalid = {isTagError} isRequired>
-                <FormLabel>Tag</FormLabel>
-                <Input placeholder = "Tag of your thread" value = {tag} onChange = {(e) => setTag(e.target.value)}/>
-                {!(isTagError) ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp; Great tag!</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a tag</FormErrorMessage>)}
-                <Box align = "center">
-                <br />Existing Tags:<br />
-                <div style = {{overflowX:"scroll", whiteSpace: "nowrap", maxWidth: "80%", justifyContent: "center", display:"inline-block"}}>
-                {usedTags.map((tag) => <Button margin = "5px" colorScheme = "blue" key = {tag} onClick = {() => setTag(tag)}>{tag}</Button>)}
-                </div>
+    return (
+        <Container minWidth="80%" padding="0">
+            <form onSubmit={handleUpdateThread}>
+                <FormControl id="title" label="Please enter a title for your thread" isInvalid={isTitleError} isRequired>
+                    <FormLabel>Title</FormLabel>
+                    <Input placeholder="Title of your thread" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    {!(isTitleError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Great title!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer title</FormErrorMessage>)}
+                </FormControl>
+                <br />
+                <FormControl id="description" label="Please enter a description of the thread" isInvalid={isDescError} isRequired>
+                    <FormLabel>Description</FormLabel>
+                    <Editor value={desc} onChange={setDesc} />
+                    {!(isDescError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Nice!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer description</FormErrorMessage>)}
+                </FormControl>
+                <br />
+                <FormControl id="tag" label="Please enter a tag for your thread" isInvalid={isTagError} isRequired>
+                    <FormLabel>Tag</FormLabel>
+                    <Input placeholder="Tag of your thread" value={tag} onChange={(e) => setTag(e.target.value)} />
+                    {!(isTagError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Great tag!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a tag</FormErrorMessage>)}
+                    <Box align="center">
+                        <br />Existing Tags:<br />
+                        <div style={{ overflowX: "scroll", whiteSpace: "nowrap", maxWidth: "80%", justifyContent: "center", display: "inline-block" }}>
+                            {usedTags.map((tag) => <Button margin="5px" colorScheme="blue" key={tag} onClick={() => setTag(tag)}>{tag}</Button>)}
+                        </div>
+                    </Box>
+                </FormControl>
+                <br />
+                <Box display="flex" justifyContent="center" gap="3%">
+                    <Button colorScheme={isTitleError || isDescError || isTagError ? "red" : "green"} type="submit" disabled={isTitleError || isDescError || isTagError}>Update Thread</Button>
+                    <Button colorScheme="red" onClick={() => Navigate("/threads/" + props.id, { state: { typeNotification: "changesDiscarded" } })}>Discard changes</Button>
                 </Box>
-        </FormControl>
-        <br />
-        <Box display = "flex" justifyContent="center" gap = "3%">
-        <Button colorScheme={isTitleError || isDescError || isTagError ? "red" : "green"} type = "submit" disabled = {isTitleError || isDescError || isTagError}>Update Thread</Button>
-        <Button colorScheme = "red" onClick = {() => Navigate("/threads/" + props.id, {state: {typeNotification: "changesDiscarded"}})}>Discard changes</Button>
-        </Box>
-        </form>
-        <br />
+            </form>
+            <br />
         </Container>
     );
 }
 
 export default function EditThread() {
+    const accessLevel = useLocation().state.access;
     const Navigate = useNavigate();
     const id = useParams().id;
     const user_id = useSelector(state => state.id);
     const thread = UseFetch("http://localhost:4000/forum_threads/" + id);
-        if (thread && thread.User_id === user_id){
-            return(
-                <>
+    if (thread && (thread.User_id === user_id || accessLevel === "moderator")) {
+        return (
+            <>
                 <Box>
                     <Navbar />
-                    <Box align = "center">
-                    <Heading>Edit Thread</Heading>
+                    <Box align="center">
+                        <Heading>Edit Thread</Heading>
                     </Box>
-                    <ThreadForm id = {id} title = {thread.title} desc = {thread.description} tag = {thread.tag}/>
+                    <ThreadForm id={id} title={thread.title} desc={thread.description} tag={thread.tag} />
                 </Box>
-                </>
-            );
-        } else {
-            Navigate("/");
-        }
+            </>
+        );
+    } else {
+        Navigate("/");
+    }
 }

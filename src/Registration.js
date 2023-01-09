@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import {store} from './store';
+import { store } from './store';
 import { useSelector } from 'react-redux';
 import {
-    Button, 
-    FormControl, 
-    FormLabel, 
-    FormHelperText, 
-    Input, 
-    Stack, 
+    Button,
+    FormControl,
+    FormLabel,
+    FormHelperText,
+    Input,
+    Stack,
     useDisclosure,
     useColorModeValue,
     useMediaQuery,
@@ -27,33 +27,37 @@ import {
     useToast,
     Heading,
     Divider,
-    FormErrorMessage,    
-  } from '@chakra-ui/react';
-  import {CheckIcon, WarningIcon} from '@chakra-ui/icons';
-  import LogoImage from './logo.png';
-  import UseFetch from './UseFetch';
-  import { ColorModeSwitcher } from './ColorModeSwitcher';
-  import { useDispatch } from 'react-redux';
-  import { useNavigate, Navigate, useLocation } from 'react-router-dom'; 
+    FormErrorMessage,
+} from '@chakra-ui/react';
+import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
+import LogoImage from './logo.png';
+import UseFetch from './UseFetch';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
+import { useDispatch } from 'react-redux';
+import { useNavigate, Navigate, useLocation } from 'react-router-dom';
 
-  const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 export default function Registration() {
     const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
     useEffect(() => {
-        if (notif){
+        if (notif) {
             let [toastTitle, toastDesc, toastStatus] = [null, null, null];
-            if (notif === "loggedOut"){
+            if (notif === "loggedOut") {
                 toastTitle = "Logged out.";
                 toastDesc = "You have succesfully logged out.";
                 toastStatus = "success";
-            } else if (notif === "notLoggedIn"){
+            } else if (notif === "notLoggedIn") {
                 toastTitle = "Not logged in.";
                 toastDesc = "You are not logged in.";
                 toastStatus = "error";
-            } else if (notif === "ERROR"){
+            } else if (notif === "deletedAccount") {
+                toastTitle = "Account deleted.";
+                toastDesc = "Your account has been deleted.";
+                toastStatus = "warning";
+            } else if (notif === "ERROR") {
                 toastTitle = "Error";
                 toastDesc = "An unknown error has occured.";
                 toastStatus = "error";
@@ -64,56 +68,56 @@ export default function Registration() {
                 status: toastStatus,
                 duration: 5000,
                 isClosable: true,
-                });
+            });
             notif = null;
         }
     }, []);
-    return(
-    <Box align = "center">
-        <Flex width = "100%" justify = "center" margin = "20px" align = "center"><img style = {{verticalAlign: "centre"}} src = {LogoImage} alt = "Logo" width = "90px"/><Heading size = "2xl" margin = "20px">HighGear</Heading>
-        <ColorModeSwitcher marginLeft = "auto" marginRight = "50px"/></Flex>
-        <Divider width = "95%" />
-        <br /><br />
-        <Heading size = "lg" id = "Heading">Sign Up</Heading>
-        <Box id = "signupContainer">
-        <SignUp />
+    return (
+        <Box align="center">
+            <Flex width="100%" justify="center" margin="20px" align="center"><img style={{ verticalAlign: "centre" }} src={LogoImage} alt="Logo" width="90px" /><Heading size="2xl" margin="20px">HighGear</Heading>
+                <ColorModeSwitcher marginLeft="auto" marginRight="50px" /></Flex>
+            <Divider width="95%" />
+            <br /><br />
+            <Heading size="lg" id="Heading">Sign Up</Heading>
+            <Box id="signupContainer">
+                <SignUp />
+            </Box>
+            <Box id="loginContainer" style={{ display: "none" }}>
+                <Login />
+            </Box>
+            <br />
+            <p id="loginText">
+                Have an account? <Button variant="link" color="green.800" onClick={() => changeTo("Login")}>Log in</Button>
+            </p>
+            <p id="signupText" style={{ display: "none" }}>
+                Don't have an account? <Button variant="link" color="green.800" onClick={() => changeTo("Signup")}>Sign Up</Button>
+            </p>
+            <br /><br />
         </Box>
-        <Box id = "loginContainer" style = {{display:"none"}}>
-        <Login />
-        </Box>
-        <br />
-        <p id = "loginText">
-        Have an account? <Button variant = "link" color = "green.800" onClick = {() => changeTo("Login")}>Log in</Button>
-        </p>
-        <p id = "signupText" style = {{display: "none"}}>
-        Don't have an account? <Button variant = "link" color = "green.800" onClick = {() => changeTo("Signup")}>Sign Up</Button>
-        </p>
-        <br /><br />
-    </Box>
     );
 }
 
-function SignUp(){
+function SignUp() {
     const dispatch = useDispatch();
     const Navigate = useNavigate();
     const [usernameInput, setUsernameInput] = React.useState("");
     const [emailInput, setEmailInput] = React.useState("");
     const [passwordInput, setPasswordInput] = React.useState("");
     const [confirmPasswordInput, setConfirmPasswordInput] = React.useState("");
-    
+
     const userData = UseFetch("http://localhost:4000/users");
     const usedUsernames = userData ? userData.map((user) => user.username) : [];
     console.log(usedUsernames);
     const usedEmails = userData ? userData.map((user) => user.email) : [];
 
     function signupRedux(data) {
-        const action = {type: "LOGIN", username: data.username, id: data.id};
+        const action = { type: "LOGIN", username: data.username, id: data.id };
         console.log(data.username);
         dispatch(action);
-        try{
-            Navigate("/", {state: {typeNotification: "accountCreated"}});
+        try {
+            Navigate("/", { state: { typeNotification: "accountCreated" } });
         }
-        catch(e){
+        catch (e) {
             console.log(e);
         }
     }
@@ -141,61 +145,61 @@ function SignUp(){
     const handleSubmit = (event) => {
         console.log("Submitted");
         event.preventDefault();
-        if (!isPasswordError && !isConfirmPasswordError && !isEmailError && !isUsernameError){
+        if (!isPasswordError && !isConfirmPasswordError && !isEmailError && !isUsernameError) {
             const salt = bcrypt.genSaltSync(10);
             const hash = bcrypt.hashSync(passwordInput, salt);
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: usernameInput, email: emailInput, password: hash})
+                body: JSON.stringify({ username: usernameInput, email: emailInput, password: hash })
             };
             fetch('http://localhost:4000/users', requestOptions)
                 .then(response => response.json())
                 .then(data => signupRedux(data))
-                .catch((e) => {console.log(JSON.stringify(e))});
+                .catch((e) => { console.log(JSON.stringify(e)) });
         }
-        else{
+        else {
             alert("One or more inputs are invalid. Please check your credentials and try again.");
         }
     }
-    return(
-        <Stack spacing={3} padding = "20px" width = "50%" boxShadow = "xl">
-            <form onSubmit = {handleSubmit}>
-            <FormControl id="username" isInvalid = {isUsernameError} isRequired>
-                <FormLabel>Username</FormLabel>
-                <Input placeholder="Username" onChange = {handleUsernameChange}/>
-                {!isUsernameError ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp;This username is available</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Username is blank or already taken.</FormErrorMessage>)}
-            </FormControl>
-            <FormControl id="email" isInvalid = {isEmailError} isRequired>
-                <FormLabel>Email address</FormLabel>
-                <Input type="email" placeholder = "Email address" onChange = {handleEmailChange}/>
-                {!isEmailError ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp;We will never share your email</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This email is invalid or already in use.</FormErrorMessage>)}
-            </FormControl>
-            <FormControl id="password" isInvalid = {isPasswordError} isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input type="password" placeholder = "Password" onChange = {handlePasswordChange} />
-                {!isPasswordError ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp;This password matches the requirements</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500"/>&nbsp;Password must include at least 8 characters, an uppercase letter, a lowercase letter, and a number</FormErrorMessage>)}
-            </FormControl>
-            <FormControl id="confirmPassword" isInvalid = {isConfirmPasswordError} isRequired>
-                <FormLabel>Confirm Password</FormLabel>
-                <Input type="password" placeholder = "Confirm password" onChange = {handleConfirmPasswordChange} />
-                {!isConfirmPasswordError ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp;Your passwords match</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The passwords must match</FormErrorMessage>)}
-            </FormControl>
-            <br />
-            <Button colorScheme="blue" type = "submit">
-                Sign Up
-            </Button>
+    return (
+        <Stack spacing={3} padding="20px" width="50%" boxShadow="xl">
+            <form onSubmit={handleSubmit}>
+                <FormControl id="username" isInvalid={isUsernameError} isRequired>
+                    <FormLabel>Username</FormLabel>
+                    <Input placeholder="Username" onChange={handleUsernameChange} />
+                    {!isUsernameError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;This username is available</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Username is blank or already taken.</FormErrorMessage>)}
+                </FormControl>
+                <FormControl id="email" isInvalid={isEmailError} isRequired>
+                    <FormLabel>Email address</FormLabel>
+                    <Input type="email" placeholder="Email address" onChange={handleEmailChange} />
+                    {!isEmailError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;We will never share your email</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This email is invalid or already in use.</FormErrorMessage>)}
+                </FormControl>
+                <FormControl id="password" isInvalid={isPasswordError} isRequired>
+                    <FormLabel>Password</FormLabel>
+                    <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
+                    {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;This password matches the requirements</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Password must include at least 8 characters, an uppercase letter, a lowercase letter, and a number</FormErrorMessage>)}
+                </FormControl>
+                <FormControl id="confirmPassword" isInvalid={isConfirmPasswordError} isRequired>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <Input type="password" placeholder="Confirm password" onChange={handleConfirmPasswordChange} />
+                    {!isConfirmPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your passwords match</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The passwords must match</FormErrorMessage>)}
+                </FormControl>
+                <br />
+                <Button colorScheme="blue" type="submit">
+                    Sign Up
+                </Button>
             </form>
         </Stack>
     );
 }
 
-function Login(){
+function Login() {
     const Navigate = useNavigate();
     const dispatch = useDispatch();
     const [usernameInput, setUsernameInput] = React.useState("");
     const [passwordInput, setPasswordInput] = React.useState("");
-    
+
     let userData = UseFetch("http://localhost:4000/users/s/" + usernameInput);
 
     const handleUsernameChange = (event) => {
@@ -211,52 +215,52 @@ function Login(){
     const handleSubmit = (event) => {
         console.log("Submitted");
         event.preventDefault();
-        if (!isUsernameError && !isPasswordError){
+        if (!isUsernameError && !isPasswordError) {
             console.log(userData[0].id)
-            const action = {type: "LOGIN", username: usernameInput, id: userData[0].id};
+            const action = { type: "LOGIN", username: usernameInput, id: userData[0].id };
             console.log(usernameInput);
             dispatch(action);
-            try{
-            Navigate("/", {state: {typeNotification: "loggedIn"}});
+            try {
+                Navigate("/", { state: { typeNotification: "loggedIn" } });
             }
-            catch(e){
-            console.log(e);
+            catch (e) {
+                console.log(e);
+            }
         }
-        }
-        else{
+        else {
             alert("One or more inputs are invalid. Please check your credentials and try again.");
         }
     }
-    return(
-        <Stack spacing={3} padding = "20px" width = "50%" boxShadow = "xl">
-            <form onSubmit = {handleSubmit}>
-            <FormControl id="username" label = "Please enter your username" isInvalid = {isUsernameError} isRequired>
-                <FormLabel>Username</FormLabel>
-                <Input placeholder = "Username" onChange = {handleUsernameChange}/>
-                {!isUsernameError ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp;This username is in our system</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Username does not exist</FormErrorMessage>)}
-            </FormControl>
-            <FormControl id="password" label = "Please enter your password" isInvalid = {isPasswordError} isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input type="password" placeholder = "Password" onChange = {handlePasswordChange} />
-                {!isPasswordError ? (<FormHelperText color = "green.500"><CheckIcon color="green.500" />&nbsp;The password is correct</FormHelperText>):(<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The password is incorrect</FormErrorMessage>)}
-            </FormControl><br />
-            <Button colorScheme="blue" type="submit">
-                Login
-            </Button>
+    return (
+        <Stack spacing={3} padding="20px" width="50%" boxShadow="xl">
+            <form onSubmit={handleSubmit}>
+                <FormControl id="username" label="Please enter your username" isInvalid={isUsernameError} isRequired>
+                    <FormLabel>Username</FormLabel>
+                    <Input placeholder="Username" onChange={handleUsernameChange} />
+                    {!isUsernameError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;This username is in our system</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Username does not exist</FormErrorMessage>)}
+                </FormControl>
+                <FormControl id="password" label="Please enter your password" isInvalid={isPasswordError} isRequired>
+                    <FormLabel>Password</FormLabel>
+                    <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
+                    {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;The password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The password is incorrect</FormErrorMessage>)}
+                </FormControl><br />
+                <Button colorScheme="blue" type="submit">
+                    Login
+                </Button>
             </form>
         </Stack>
     );
 }
 
-function changeTo(newPage){
-    if(newPage === "Signup"){
+function changeTo(newPage) {
+    if (newPage === "Signup") {
         document.getElementById("Heading").innerHTML = "Sign Up";
         document.getElementById("loginText").style.display = "block";
         document.getElementById("signupText").style.display = "none";
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("signupContainer").style.display = "block";
     }
-    else{
+    else {
         document.getElementById("Heading").innerHTML = "Login";
         document.getElementById("loginText").style.display = "none";
         document.getElementById("signupText").style.display = "block";

@@ -3,13 +3,13 @@ import 'react-quill/dist/quill.snow.css';
 import React from 'react';
 import { useState } from 'react';
 
-const toolbarOptions = [  ['bold', 'italic', 'underline', 'strike'],
+const toolbarOptions = [['bold', 'italic', 'underline', 'strike'],
 ['code-block'],
 
 [{ 'header': 1 }, { 'header': 2 }],
-[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-[{ 'script': 'sub'}, { 'script': 'super' }],
-[{ 'indent': '-1'}, { 'indent': '+1' }],
+[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+[{ 'script': 'sub' }, { 'script': 'super' }],
+[{ 'indent': '-1' }, { 'indent': '+1' }],
 
 [{ 'size': ['small', false, 'large', 'huge'] }],
 
@@ -23,5 +23,5 @@ const toolbarOptions = [  ['bold', 'italic', 'underline', 'strike'],
 ];
 
 export default function Editor(props) {
-    return <ReactQuill theme="snow" value = {props.value} onChange = {props.onChange} modules = {{toolbar: toolbarOptions}} />;
+    return <ReactQuill theme="snow" value={props.value} onChange={props.onChange} modules={{ toolbar: toolbarOptions }} />;
 }

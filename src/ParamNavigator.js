@@ -8,7 +8,7 @@ export default function ParamNavigator() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     setInterval(() => setLoading(false), 50);
-    const redirectToIndex = setTimeout(() => navigate(username ? "/" : "/Registration", {state: {typeNotification: "ERROR"}}), 2000);
+    const redirectToIndex = setTimeout(() => navigate(username ? "/" : "/Registration", { state: { typeNotification: "ERROR" } }), 2000);
     const location = useLocation();
     const notif = location.state ? location.state.typeNotification : null;
     const page = location.state ? location.state.page : null;
@@ -16,11 +16,11 @@ export default function ParamNavigator() {
 
     if (page && notif) {
         clearTimeout(redirectToIndex);
-        navigate("/" + page, {state: {typeNotification: notif}})
+        navigate("/" + page, { state: { typeNotification: notif } })
     };
 
 
     return (
-        <Box height = "100vh" width = "100%" align = "center"><Spinner top = "50vh" position = "absolute" size = "xl"/></Box>
+        <Box height="100vh" width="100%" align="center"><Spinner top="50vh" position="absolute" size="xl" /></Box>
     )
 }
