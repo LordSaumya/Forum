@@ -49,7 +49,9 @@ const bcrypt = require('bcryptjs');
 function ThreadContainer(props) {
     const Navigate = useNavigate();
     const username = useParams().username;
-    const isUser = useSelector(state => state.username) === username;
+    const author = UseFetch("http://localhost:4000/users/" + props.User_id);
+    const comments = UseFetch("http://localhost:4000/forum_threads/" + props.id + "/comments");
+    const timeAgo = moment(props.date).fromNow();
 
     const handleDelete = () => {
         if (window.confirm("Are you sure you want to delete this thread?")) {
@@ -68,26 +70,29 @@ function ThreadContainer(props) {
     }
 
     const handleUpdate = () => {
-        Navigate("/editThread/" + props.id, {state: {access: "moderator"}});
+        Navigate("/editThread/" + props.id, { state: { access: "moderator" } });
     }
 
 
-    return (
+    return (<>
         <Box display="flex" justifyContent="flex-start" alignItems="center" height="50px" border="1px" borderRadius="5px" padding="10px" margin="5px">
             <Button onClick={handleDelete} colorScheme="red" size="sm" variant="outline"><FaTrashAlt /></Button>
-                    &nbsp;
-                    <Button onClick={handleUpdate} colorScheme="green" size="sm" variant="outline"><FaPencilAlt /></Button>
-                    &nbsp;&nbsp;
-                    <Divider orientation="vertical" />
-                    &nbsp;&nbsp;
+            &nbsp;
+            <Button onClick={handleUpdate} colorScheme="green" size="sm" variant="outline"><FaPencilAlt /></Button>
+            &nbsp;&nbsp;
+            <Divider orientation="vertical" />
+            &nbsp;&nbsp;
             <Link maxWidth="40vw" overflow="hidden" href={"/threads/" + props.id}><Heading size="md">{props.title}</Heading></Link>
+            <Text fontSize="sm" color="gray.500">&nbsp;&nbsp;Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
         </Box>
-    );
+        {comments ? comments.map((comment) => <CommentContainer user_id={comment.User_id} id={comment.id} ForumThread_id={comment.ForumThread_id} content={comment.content} date={comment.created_at}></CommentContainer>) : <></>}
+    </>);
 }
 
 function CommentContainer(props) {
     const Navigate = useNavigate();
-    const username = useParams().username;
+    const timeAgo = moment(props.date).fromNow();
+    const author = UseFetch("http://localhost:4000/users/" + props.user_id);
 
     const handleDelete = () => {
         if (window.confirm("Are you sure you want to delete this comment?")) {
@@ -97,7 +102,7 @@ function CommentContainer(props) {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(data);
-                    Navigate("/ParamNavigator", { state: { typeNotification: "commentDeleted", page: "ProfilePage/" + username } });
+                    Navigate("/ParamNavigator", { state: { typeNotification: "commentDeleted", page: "ModDashboard" } });
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -106,16 +111,19 @@ function CommentContainer(props) {
     }
 
     const handleUpdate = () => {
-        Navigate("/editComment/" + props.ForumThread_id + ":" + props.id);
+        Navigate("/editComment/" + props.ForumThread_id + ":" + props.id, { state: { access: "moderator" } });
     }
 
     return (
-        <Box display="flex" justifyContent="flex-start" alignItems="center" height="50px" border="1px" borderRadius="5px" padding="10px" margin="5px">
-            <Button onClick={handleDelete} colorScheme="red" size="sm" variant="outline"><FaTrashAlt /></Button>
+        <Box display="flex" justifyContent="flex-start" alignItems="left" height="50px" border="1px" borderRadius="5px" padding="10px" margin="5px" width="80%">
+            <Button onClick={handleDelete} colorScheme="red" size="sm" display="block" variant="outline"><FaTrashAlt /></Button>
+            &nbsp;
+            <Button onClick={handleUpdate} colorScheme="green" display="block" size="sm" variant="outline"><FaPencilAlt /></Button>
             &nbsp;&nbsp;
             <Divider orientation="vertical" />
             &nbsp;&nbsp;
-            <Link maxWidth="40vw" overflow="hidden" href={"/threads/" + props.ForumThread_id}><Heading size="md"><div dangerouslySetInnerHTML={{ __html: props.content }}></div></Heading></Link>
+            <Link maxWidth="40vw" maxHeight="200px" overflow="hidden" href={"/threads/" + props.ForumThread_id}><Heading size="md"><div dangerouslySetInnerHTML={{ __html: props.content }}></div></Heading></Link>
+            <Text fontSize="sm" color="gray.500">&nbsp;&nbsp;Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
         </Box>
     );
 }
@@ -170,6 +178,15 @@ function DeleteAccount() {
     );
 }
 
+function UserContainer(props) {
+    const username = props.username;
+    return (
+        <Box display="flex" justifyContent="flex-start" alignItems="center" height="50px" border="1px" borderRadius="5px" padding="10px" margin="5px">
+            <Link maxWidth="40vw" overflow="hidden" href={"/ProfilePage/" + username}><Heading size="md">{username}</Heading></Link>
+        </Box>
+    );
+}
+
 export default function ModDashboard() {
     const navigate = useNavigate();
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
@@ -180,7 +197,7 @@ export default function ModDashboard() {
 
     const toast = useToast();
     const location = useLocation();
-    let notif = location.state ? location.state.typeNotification : null;
+    let notif = location.state ? location.state.typeNotification : false;
     useEffect(() => {
         if (notif) {
             let [toastTitle, toastDesc, toastStatus] = [null, null, null];
@@ -200,6 +217,10 @@ export default function ModDashboard() {
                 toastTitle = "Password changed";
                 toastDesc = "Your password has been changed.";
                 toastStatus = "success";
+            } else if (notif === "deletedAccount") {
+                toastTitle = "Account deleted.";
+                toastDesc = "The account has been deleted.";
+                toastStatus = "warning";
             }
 
             toast({
@@ -221,55 +242,33 @@ export default function ModDashboard() {
                 <br />
                 <Divider />
                 <br />
-                <Heading size="md">Content</Heading>
-                <br />
                 <Box display="flex">
-                    <Box align="center" flex="50%" borderRight="1px">
-                        {threads ? <><Heading size="md">Threads</Heading><br /></> : <></>}
-                        <div style={{ overflowY: "scroll", overflowX: "hidden", whiteSpace: "nowrap", maxHeight: "400px", justifyContent: "center", display: "inline-block" }}>
-                            {threads ? threads.map((thread) => <ThreadContainer key={thread.id} id={thread.id} title={thread.title} />) : <></>}
-                        </div>
-                        {threads ? threads.length === 0 ? <Text>No threads posted</Text> : <></> : <></>}
-                    </Box>
-                    {/* <Box align="center" flex="50%">
-                        {comments ? <><Heading size="md">Comments</Heading><br /></> : <></>}
-                        <div style={{ overflowY: "scroll", whiteSpace: "nowrap", maxHeight: "40%", justifyContent: "center", display: "inline-block" }}>
-                            {comments ? comments.map((comment) => <CommentContainer key={comment.id} ForumThread_id={comment.ForumThread_id} id={comment.id} content={comment.content} />) : <></>}
-                        </div>
-                        {comments ? comments.length === 0 ? <Text>No comments posted</Text> : <></> : <></>}
-                    </Box> */}
-                </Box>
-                <br />
-                <Divider />
-                {/* {isUser
-                    ? <>
-                        <br />
-                        <Heading size="md">Edit Profile</Heading>
+                    <Box flex="3">
+                        <Heading size="md">All Content</Heading>
                         <br />
                         <Box display="flex">
-                            <Box flex="50%" align="center" margin="10px" borderRight="1px">
-                                <Heading size="sm">Change Email Address</Heading>
-                                <br />
-                                Your current email address is {userData ? userData.find((user) => user.username === username).email : "loading..."}
-                                <EditEmail />
-                            </Box>
-                            <Box flex="50%" align="center">
-                                <Heading size="sm">Change Password</Heading>
-                                <br />
-                                <EditPassword />
+                            <Box align="center" flex="50%" borderRight="1px">
+                                <div style={{ overflowY: "scroll", overflowX: "hidden", whiteSpace: "nowrap", maxHeight: "400px", justifyContent: "center", display: "inline-block" }}>
+                                    {threads ? threads.map((thread) => <ThreadContainer key={thread.id} id={thread.id} title={thread.title} User_id={thread.User_id} date={thread.created_at} />) : <></>}
+                                </div>
+                                {threads ? threads.length === 0 ? <Text>No content posted</Text> : <></> : <></>}
                             </Box>
                         </Box>
+                    </Box>
+                    <Box flex="1">
+                        <Heading size="md">All Users</Heading>
                         <br />
-                        <Divider />
-                        <br />
-                        <Heading size="md">Delete Account</Heading>
-                        <br />
-                        <DeleteAccount />
-                    </>
-                    : <></>
-                }
-                <br /> */}
+                        <Box display="flex">
+                            <Box align="center" flex="50%" borderRight="1px">
+                                <div style={{ overflowY: "scroll", overflowX: "hidden", whiteSpace: "nowrap", maxHeight: "400px", justifyContent: "center", display: "inline-block" }}>
+                                    {userData ? userData.map((user) => <UserContainer key={user.id} username={user.username} />) : <></>}
+                                </div>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Box>
             </Box>
+            <br />
         </Box>
     );
 }

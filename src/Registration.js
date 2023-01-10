@@ -168,7 +168,7 @@ function SignUp() {
                 <FormControl id="username" isInvalid={isUsernameError} isRequired>
                     <FormLabel>Username</FormLabel>
                     <Input placeholder="Username" onChange={handleUsernameChange} />
-                    {!isUsernameError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;This username is available</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Username is blank or already taken.</FormErrorMessage>)}
+                    {!isUsernameError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;This username is available.</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Username is blank or already taken.</FormErrorMessage>)}
                 </FormControl>
                 <FormControl id="email" isInvalid={isEmailError} isRequired>
                     <FormLabel>Email address</FormLabel>

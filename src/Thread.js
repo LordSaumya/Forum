@@ -5,28 +5,17 @@ import UseFetch from './UseFetch.js';
 import Editor from './Editor.js';
 import LazyLoad from 'react-lazyload';
 import moment from 'moment';
+import moderatorList from './moderatorsList.json';
 import { FaArrowCircleUp } from 'react-icons/fa';
 import {
-    useColorModeValue,
-    useMediaQuery,
-    ChakraProvider,
     Box,
     Text,
     Link,
     Badge,
-    VStack,
-    Code,
     Select,
-    Grid,
-    IconButton,
-    theme,
     Button,
-    ButtonGroup,
     Container,
     useToast,
-    Flex,
-    HStack,
-    LightMode,
     Heading,
     Divider,
     FormControl,
@@ -37,11 +26,10 @@ import {
     Collapse,
     Input,
 } from '@chakra-ui/react';
-import store from './store.js';
 import 'react-quill/dist/quill.snow.css';
 import { useSelector } from 'react-redux';
 import { CheckIcon, WarningIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon, CloseIcon } from '@chakra-ui/icons';
-import { useParams, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 function CommentForm() {
     const navigate = useNavigate();
@@ -98,6 +86,8 @@ function ThreadContainer(props) {
     const timeAgo = moment(props.date).fromNow();
     const author = UseFetch("http://localhost:4000/users/" + props.User_id);
     const handleToggle = () => setShow(!show)
+    const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
+    const isMod = mods.includes(author.username);
 
     const redirectDelete = (data) => {
         console.log(data);
@@ -120,13 +110,19 @@ function ThreadContainer(props) {
     }
     return (
         <div className='ql-editor' style={{ margin: "0px", padding: "0px" }}>
-            <Container boxShadow="md" minWidth="90%" padding="10px" name="threadContainer" marginBottom="10px">
+            <Container boxShadow="md" minWidth="90%" padding="10px" name="threadContainer" marginBottom="10px" border={isMod ? "1px" : "0px"} borderColor={isMod ? "gold" : "white"}>
                 <Badge ml='1' colorScheme='green' float="right" name="threadTag">
                     {props.tag}
                 </Badge>
+                {isMod ?
+                    <Badge ml='1' colorScheme='yellow' float="right" name="mod">
+                        Moderator Post
+                    </Badge>
+                    : <></>
+                }
                 <Heading size="md" name="threadTitle">{props.title}</Heading>
                 <Text fontSize="sm" color="gray.500">Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
-                <Divider padding="10px" /><br />
+                <Divider paddingTop="10px" /><br />
                 <Collapse startingHeight="80px" in={show} padding="10px" dangerouslySetInnerHTML={{ __html: props.desc }} name="threadDesc">
                 </Collapse>
                 <Button size='sm' onClick={handleToggle} mt='1rem'>
@@ -134,7 +130,7 @@ function ThreadContainer(props) {
                 </Button>
                 {props.User_id === useSelector(state => state.id) ? (
                     <>
-                        <Divider padding="10px" />
+                        <Divider paddingTop="10px" />
                         <Box display="flex" justifyContent="center" gap="3%" margin="10px">
                             <Button colorScheme="red" onClick={handleDelete}>Delete Thread</Button>
                             <Button colorScheme="blue" onClick={() => Navigate("/editThread/" + props.id)}>Edit Thread</Button>
@@ -150,6 +146,8 @@ function CommentContainer(props) {
     const Navigate = useNavigate();
     const timeAgo = moment(props.date).fromNow();
     const author = UseFetch("http://localhost:4000/users/" + props.user_id);
+    const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
+    const isMod = mods.includes(author.username);
 
     const refreshDelete = (data) => {
         console.log(data);
@@ -174,14 +172,22 @@ function CommentContainer(props) {
 
     return (
         <LazyLoad height={200}>
-            <Container boxShadow="md" minWidth="80%" padding="10px" name="commentContainer" marginBottom="10px">
+            <Container boxShadow="md" minWidth="80%" padding="10px" name="commentContainer" marginBottom="10px" border={isMod ? "1px" : "0px"} borderColor={isMod ? "gold" : "white"}>
                 <Text fontSize="sm" color="gray.500">Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
-                <Divider padding="10px" />
+                {isMod ? <>
+                    <Badge ml='1' colorScheme='yellow' float="right" name="mod" top="2px">
+                        Moderator Comment
+                    </Badge>
+                    <br />
+                </>
+                    : <></>
+                }
+                <Divider paddingTop="10px" />
                 <Box padding="10px" dangerouslySetInnerHTML={{ __html: props.content }} name="commentContent">
                 </Box>
                 {props.user_id === useSelector(state => state.id) ? (
                     <>
-                        <Divider padding="10px" />
+                        <Divider paddingTop="10px" />
                         <Box display="flex" justifyContent="center" gap="3%" margin="10px">
                             <Button colorScheme="red" onClick={handleDelete}>Delete comment</Button>
                             <Button colorScheme="blue" onClick={() => Navigate("/editComment/" + props.threadID + ":" + props.id)}>Edit comment</Button>

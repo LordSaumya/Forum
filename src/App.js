@@ -8,7 +8,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import Home from "./Home";
-// import About from "./About";
 import Profile from "./ProfilePage";
 import Registration from "./Registration";
 import Thread from "./Thread";

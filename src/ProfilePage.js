@@ -278,22 +278,52 @@ function DeleteAccount() {
   return (
     <Box width="60%">
       <Text fontSize="sm" color="red.500"><WarningIcon />{isMod ? " As a moderator, you may not delete your account" : "This action is irreversible. All of your content will be deleted."}</Text><br />
-      {!isMod ? 
-      (<> 
-      <FormControl id="password" isInvalid= {isPasswordError} isRequired>
-        <FormLabel>Password</FormLabel>
-          <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
-          !isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This password is incorrect.</FormErrorMessage>)
-      </FormControl><br />
-      <Button onClick={handleDeleteSubmit} colorScheme={isPasswordError ? "red" : "green"} size="sm" variant="outline" disabled={isPasswordError || isMod}>Submit</Button><br />
-      </>) : <></>
-} </Box>);
+      {!isMod ?
+        (<>
+          <FormControl id="password" isInvalid={isPasswordError} isRequired>
+            <FormLabel>Password</FormLabel>
+            <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
+            {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This password is incorrect.</FormErrorMessage>)}
+          </FormControl><br />
+          <Button onClick={handleDeleteSubmit} colorScheme={isPasswordError ? "red" : "green"} size="sm" variant="outline" disabled={isPasswordError || isMod}>Submit</Button><br />
+        </>) : <></>
+      } </Box>);
+}
+
+function DeleteMod(props) {
+  const user = UseFetch("http://localhost:4000/users/s/" + props.username)
+  const Navigate = useNavigate();
+  const id = user ? user[0].id : null;
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this account? This action cannot be undone.")) {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      };
+      fetch('http://localhost:4000/users/' + id, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Account deleted successfully!");
+          console.log(data);
+          Navigate("/ModDashboard", { state: { typeNotification: "deletedAccount" } });
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  }
+
+  return (
+    <><Button onClick={handleDelete} colorScheme="red" size="lg" variant="outline">Delete Account</Button>< br /></>
+  );
 }
 
 export default function Profile() {
   const userData = UseFetch('http://localhost:4000/users');
   const usernames = userData ? userData.map((user) => user.username) : [];
   const username = useParams().username;
+  const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
+  const isMod = mods.includes(useSelector(state => state.username));
   const isUser = useSelector(state => state.username) === username;
   let threads = UseFetch('http://localhost:4000/forum_threads');
   threads = threads && userData ? threads.filter((thread) => thread.User_id === userData.find((user) => user.username === username).id) : [];
@@ -357,7 +387,7 @@ export default function Profile() {
             <div style={{ overflowY: "scroll", whiteSpace: "nowrap", maxHeight: "40%", justifyContent: "center", display: "inline-block" }}>
               {comments ? comments.map((comment) => <CommentContainer key={comment.id} ForumThread_id={comment.ForumThread_id} id={comment.id} content={comment.content} />) : <></>}
             </div>
-            {comments ? comments.length === 0 ? <Text>No comments posted</Text> : <></> : <></>}
+            {comments ? (comments.length === 0 ? <Text>No comments posted</Text> : <></>) : <></>}
           </Box>
         </Box>
         <br />
@@ -388,6 +418,14 @@ export default function Profile() {
             <DeleteAccount />
           </>
           : <></>
+        }
+        {
+          isMod && !mods.includes(username)
+            ? <>
+              <br />
+              <DeleteMod username={username} />
+            </>
+            : <></>
         }
         <br />
       </Box>

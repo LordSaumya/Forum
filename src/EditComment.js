@@ -37,7 +37,7 @@ import {
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { CheckIcon, WarningIcon, AddIcon, ChatIcon, RepeatIcon, Search2Icon } from '@chakra-ui/icons';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 
 function CommentForm(props) {
     const Navigate = useNavigate();
@@ -91,6 +91,8 @@ function CommentForm(props) {
 }
 
 export default function EditComment() {
+    const state = useLocation().state;
+    const accessLevel = state ? state.access : null;
     const Navigate = useNavigate();
     const ids = useParams().ids.split(":");
     const thread_id = parseInt(ids[0]);
@@ -99,7 +101,7 @@ export default function EditComment() {
     const comments = UseFetch("http://localhost:4000/forum_threads/" + thread_id + "/comments");
     console.log("http://localhost:4000/forum_threads/" + thread_id + "/comments");
     const comment = [...comments].find(comment => comment.id === id);
-    if (comment && comment.User_id === user_id) {
+    if (comment && (comment.User_id === user_id || accessLevel === "moderator")) {
         return (
             <>
                 <Box>

@@ -7,6 +7,7 @@ import LazyLoad from 'react-lazyload';
 import moment from 'moment';
 import { FaArrowCircleUp } from 'react-icons/fa';
 import 'react-quill/dist/quill.snow.css';
+import moderatorList from './moderatorsList.json';
 import {
     useColorModeValue,
     useMediaQuery,
@@ -114,17 +115,25 @@ function ThreadContainer(props) {
     const timeAgo = moment(props.date).fromNow();
     const author = UseFetch("http://localhost:4000/users/" + props.user_id);
     const handleToggle = () => setShow(!show)
+    const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
+    const isMod = mods.includes(author.username);
 
     return (
         <LazyLoad>
             <div className='ql-editor' style={{ margin: "0px", padding: "0px" }}>
-                <Container boxShadow="md" minWidth="80%" padding="10px" name="threadContainer" marginBottom="10px">
+                <Container boxShadow="md" minWidth="80%" padding="10px" name="threadContainer" marginBottom="10px" border={isMod ? "1px" : "0px"} borderColor={isMod ? "gold" : "white"}>
                     <Badge ml='1' colorScheme='green' float="right" name="threadTag">
                         {props.tag}
                     </Badge>
+                    {isMod ?
+                        <Badge ml='1' colorScheme='yellow' float="right" name="mod">
+                            Moderator Post
+                        </Badge>
+                        : <></>
+                    }
                     <a href={"./Threads/" + props.id}><Heading size="md" name="threadTitle">{props.title}</Heading>
                         <Text fontSize="sm" color="gray.500">Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
-                        <Divider padding="10px" /><br />
+                        <Divider paddingTop="10px" /><br />
                         <Collapse startingHeight="80px" in={show} padding="10px" dangerouslySetInnerHTML={{ __html: props.desc }} name="threadDesc">
                         </Collapse>
                     </a>
