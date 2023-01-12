@@ -1,40 +1,20 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
-import Editor from './Editor.js';
-import LazyLoad from 'react-lazyload';
-import moment from 'moment';
-import { FaArrowCircleUp, FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import 'react-quill/dist/quill.snow.css';
 import moderatorList from './moderatorsList.json';
 import {
-  useColorModeValue,
   useToast,
-  useMediaQuery,
-  ChakraProvider,
   Box,
   Text,
   Link,
-  Badge,
-  VStack,
-  Code,
-  Select,
-  Grid,
-  IconButton,
-  theme,
   Button,
-  ButtonGroup,
-  Container,
-  Flex,
-  HStack,
-  LightMode,
   Heading,
   Divider,
   FormControl,
-  Table,
   FormLabel,
-  Spinner,
   FormErrorMessage,
   FormHelperText,
   Collapse,
@@ -42,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
-import { CheckIcon, WarningIcon, AddIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon, DeleteIcon } from '@chakra-ui/icons';
+import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
 import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 const bcrypt = require('bcryptjs');
 

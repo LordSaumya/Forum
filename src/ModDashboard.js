@@ -1,54 +1,33 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
-import Editor from './Editor.js';
-import LazyLoad from 'react-lazyload';
 import moment from 'moment';
-import { FaArrowCircleUp, FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import 'react-quill/dist/quill.snow.css';
 import moderatorList from './moderatorsList.json';
 import {
-    useColorModeValue,
     useToast,
-    useMediaQuery,
-    ChakraProvider,
     Box,
     Text,
     Link,
-    Badge,
-    VStack,
-    Code,
-    Select,
-    Grid,
-    IconButton,
-    theme,
     Button,
-    ButtonGroup,
-    Container,
-    Flex,
-    HStack,
-    LightMode,
     Heading,
     Divider,
     FormControl,
-    Table,
     FormLabel,
-    Spinner,
     FormErrorMessage,
     FormHelperText,
-    Collapse,
     Input,
 } from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
-import { CheckIcon, WarningIcon, AddIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon, DeleteIcon } from '@chakra-ui/icons';
-import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
+import { useNavigate, useLocation } from 'react-router-dom';
 const bcrypt = require('bcryptjs');
 
 function ThreadContainer(props) {
     const Navigate = useNavigate();
-    const username = useParams().username;
     const author = UseFetch("http://localhost:4000/users/" + props.User_id);
     const comments = UseFetch("http://localhost:4000/forum_threads/" + props.id + "/comments");
     const timeAgo = moment(props.date).fromNow();
@@ -124,56 +103,6 @@ function CommentContainer(props) {
             &nbsp;&nbsp;
             <Link maxWidth="40vw" maxHeight="200px" overflow="hidden" href={"/threads/" + props.ForumThread_id}><Heading size="md"><div dangerouslySetInnerHTML={{ __html: props.content }}></div></Heading></Link>
             <Text fontSize="sm" color="gray.500">&nbsp;&nbsp;Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
-        </Box>
-    );
-}
-
-function DeleteAccount() {
-    const id = useSelector(state => state.id);
-    const dispatch = useDispatch();
-    const Navigate = useNavigate();
-    const [passwordInput, setPasswordInput] = React.useState('');
-    const userData = UseFetch('http://localhost:4000/users/' + id);
-    const isPasswordError = passwordInput.length === 0 || (userData && !bcrypt.compareSync(passwordInput, userData.password));
-
-    const handlePasswordChange = (event) => {
-        setPasswordInput(event.target.value);
-    }
-
-    const logOutOnDelete = () => {
-        const action = { type: "LOGOUT" };
-        dispatch(action);
-    }
-
-
-    const handleDeleteSubmit = () => {
-        if (!isPasswordError && window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-            const requestOptions = {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            };
-            fetch('http://localhost:4000/users/' + id, requestOptions)
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log("Account deleted successfully!");
-                    console.log(data);
-                    logOutOnDelete();
-                    Navigate("/Registration", { state: { typeNotification: "deletedAccount" } });
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }
-    }
-    return (
-        <Box width="60%">
-            <Text fontSize="sm" color="red.500"><WarningIcon /> This action is irreversible. All of your content will be deleted.</Text><br />
-            <FormControl id="password" isInvalid={isPasswordError} isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
-                {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This password is incorrect.</FormErrorMessage>)}
-            </FormControl><br />
-            <Button onClick={handleDeleteSubmit} colorScheme={isPasswordError ? "red" : "green"} size="sm" variant="outline" disabled={isPasswordError}>Submit</Button><br />
         </Box>
     );
 }

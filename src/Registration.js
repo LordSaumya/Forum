@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import { store } from './store';
-import { useSelector } from 'react-redux';
 import {
     Button,
     FormControl,
@@ -8,22 +6,8 @@ import {
     FormHelperText,
     Input,
     Stack,
-    useDisclosure,
-    useColorModeValue,
-    useMediaQuery,
-    ChakraProvider,
     Box,
-    Text,
-    Link,
-    VStack,
-    Code,
-    Grid,
-    theme,
-    ButtonGroup,
-    Container,
     Flex,
-    Switch,
-    HStack,
     useToast,
     Heading,
     Divider,
@@ -34,7 +18,7 @@ import LogoImage from './logo.png';
 import UseFetch from './UseFetch';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { useDispatch } from 'react-redux';
-import { useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const bcrypt = require('bcryptjs');
 

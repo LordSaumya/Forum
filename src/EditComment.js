@@ -3,41 +3,19 @@ import { useState } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
 import Editor from './Editor.js';
-import moment from 'moment';
-import { FaArrowCircleUp } from 'react-icons/fa';
 import {
-    useColorModeValue,
-    useMediaQuery,
-    ChakraProvider,
     Box,
-    Text,
-    Link,
-    Badge,
-    VStack,
-    Code,
-    Select,
-    Grid,
-    IconButton,
-    theme,
     Button,
-    ButtonGroup,
     Container,
-    Flex,
-    HStack,
-    LightMode,
     Heading,
-    Divider,
     FormControl,
     FormLabel,
-    Spinner,
     FormErrorMessage,
     FormHelperText,
-    Collapse,
-    Input,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import { CheckIcon, WarningIcon, AddIcon, ChatIcon, RepeatIcon, Search2Icon } from '@chakra-ui/icons';
-import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { CheckIcon, WarningIcon} from '@chakra-ui/icons';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 function CommentForm(props) {
     const Navigate = useNavigate();

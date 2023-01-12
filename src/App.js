@@ -4,7 +4,7 @@ import {
   theme,
   Spinner,
 } from '@chakra-ui/react';
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import Home from "./Home";

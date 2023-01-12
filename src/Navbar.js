@@ -1,14 +1,6 @@
 import {
-  useColorModeValue,
-  useMediaQuery,
-  ChakraProvider,
   Box,
   Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
   Button,
   ButtonGroup,
   Container,
@@ -17,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import LogoImage from './logo.png';
 import moderatorList from './moderatorsList.json';
 import { useSelector, useDispatch } from 'react-redux';

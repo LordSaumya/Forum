@@ -9,25 +9,13 @@ import { FaArrowCircleUp } from 'react-icons/fa';
 import 'react-quill/dist/quill.snow.css';
 import moderatorList from './moderatorsList.json';
 import {
-    useColorModeValue,
-    useMediaQuery,
-    ChakraProvider,
     Box,
     Text,
     Link,
     Badge,
-    VStack,
-    Code,
     Select,
-    Grid,
-    IconButton,
-    theme,
     Button,
-    ButtonGroup,
     Container,
-    Flex,
-    HStack,
-    LightMode,
     Heading,
     Divider,
     FormControl,
@@ -38,12 +26,11 @@ import {
     Collapse,
     Input,
     useToast,
-    Toast,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
 import { CheckIcon, WarningIcon, AddIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon } from '@chakra-ui/icons';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function ThreadForm() {
     const [desc, setDesc] = useState("");
