@@ -1,8 +1,14 @@
+//Imports
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Box, Spinner } from '@chakra-ui/react';
 
+
+//Body
+
+//Intermediary page shown while refreshing/redirecting with location parameters
+//Also handles invalid urls.
 export default function ParamNavigator() {
     const username = useSelector(state => state.username);
     const navigate = useNavigate();

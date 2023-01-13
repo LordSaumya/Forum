@@ -1,3 +1,4 @@
+//Imports
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
@@ -32,12 +33,16 @@ import 'react-quill/dist/quill.snow.css';
 import { CheckIcon, WarningIcon, AddIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon } from '@chakra-ui/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+//Body
+
+//Form to create thread
 function ThreadForm() {
     const [desc, setDesc] = useState("");
     const [title, setTitle] = useState("");
     const [tag, setTag] = useState("");
     const Navigate = useNavigate();
 
+    //Fetches existing tags
     const threadsData = UseFetch("http://localhost:4000/forum_threads");
     let usedTags = threadsData ? threadsData.map((thread) => thread.tag) : [];
     usedTags = Array.from(new Set(usedTags));
@@ -47,6 +52,8 @@ function ThreadForm() {
     const isTagError = tag === "";
 
     const user_id = useSelector(state => state.id);
+
+    //Creates thread
     const handleCreateThread = (event) => {
         event.preventDefault();
         console.log("Creating thread");
@@ -57,11 +64,12 @@ function ThreadForm() {
         };
         fetch('http://localhost:4000/forum_threads', requestOptions)
             .then(response => response.json())
-            .then(data => refreshPage(data))
+            .then(data => refreshCreate(data))
             .catch(err => console.log(err));
     }
 
-    const refreshPage = (data) => {
+    //Refreshes page after thread creation
+    const refreshCreate = (data) => {
         console.log(data);
         Navigate("/threads/" + data.id, { state: { typeNotification: "threadCreated" } });
     }
@@ -97,11 +105,15 @@ function ThreadForm() {
     );
 }
 
+//Container for threads
 function ThreadContainer(props) {
     const [show, setShow] = React.useState(false)
     const timeAgo = moment(props.date).fromNow();
     const author = UseFetch("http://localhost:4000/users/" + props.user_id);
+
+    //Handles visibility of the content
     const handleToggle = () => setShow(!show)
+
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     const isMod = mods.includes(author.username);
 
@@ -133,12 +145,13 @@ function ThreadContainer(props) {
     );
 }
 
-
+// Main container for home page
 export default function Home() {
     const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
+    // Provides toast functionality using location parameters.
     useEffect(() => {
         if (notif) {
             let [toastTitle, toastDesc, toastStatus] = [null, null, null];
@@ -156,7 +169,7 @@ export default function Home() {
                 toastStatus = "error";
             } else if (notif === "permissionDenied") {
                 toastTitle = "Permission denied.";
-                toastDesc = "You do not have access to the moderator dashboard.";
+                toastDesc = "You do not have access to this page.";
                 toastStatus = "error";
             } else if (notif === "ERROR") {
                 toastTitle = "Error";
@@ -174,6 +187,7 @@ export default function Home() {
         }
     }, []);
 
+    //Toggles visibility between form and threads
     const [showForm, setShowForm] = React.useState(false)
     const [showThreads, setShowThreads] = React.useState(true)
     let btnText = showThreads
@@ -184,10 +198,12 @@ export default function Home() {
         setShowForm(!showForm)
         setShowThreads(!showThreads)
     }
+
     const threadsData = UseFetch("http://localhost:4000/forum_threads");
     const [sort_by, setSort_by] = React.useState("date");
     const [reverse, setReverse] = React.useState(false);
 
+    //Sorts threads by date, title, or tag
     const sortedThreads = threadsData ? threadsData.sort((a, b) => {
         if (sort_by === "date") {
             return reverse ? new Date(b.created_at) - new Date(a.created_at) : new Date(a.created_at) - new Date(b.created_at);
@@ -201,6 +217,7 @@ export default function Home() {
         }
     }) : null;
 
+    //Searches threads by title, description, or tag
     function Search(item) {
         var thread = document.getElementsByName("threadContainer");
         var numResults = 0;
@@ -225,6 +242,7 @@ export default function Home() {
         }
     }
 
+    //Toggles visibility of scroll to top button
     const [visible, setVisible] = useState(false)
     const toggleVisible = () => {
         const scrolled = document.documentElement.scrollTop;
@@ -236,6 +254,7 @@ export default function Home() {
         }
     }
     window.addEventListener('scroll', toggleVisible);
+
     return (
         <Box>
             <Navbar currentPage="home" />

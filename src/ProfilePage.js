@@ -181,6 +181,7 @@ function EditPassword() {
       const requestOptions = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        //Hashes the new password before sending it to the server
         body: JSON.stringify({ password: bcrypt.hashSync(newPasswordInput, salt) })
       };
       fetch('http://localhost:4000/users/' + id, requestOptions)
@@ -311,6 +312,8 @@ export default function Profile() {
   const toast = useToast();
   const location = useLocation();
   let notif = location.state ? location.state.typeNotification : null;
+
+  //Provides Toast functionality with location parameters
   useEffect(() => {
     if (notif) {
       let [toastTitle, toastDesc, toastStatus] = [null, null, null];

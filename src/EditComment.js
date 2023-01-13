@@ -1,3 +1,4 @@
+//Imports
 import React from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
@@ -17,6 +18,9 @@ import { useSelector } from 'react-redux';
 import { CheckIcon, WarningIcon} from '@chakra-ui/icons';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
+//Body
+
+//Form to edit comment
 function CommentForm(props) {
     const Navigate = useNavigate();
     const [content, setContent] = useState(props.content);
@@ -24,6 +28,7 @@ function CommentForm(props) {
     const isContentError = !(content.replace(/(<([^>]+)>)/gi, "").length > 20);
     const user_id = useSelector(state => state.id);
 
+    //Updates comment
     const handleUpdateComment = (event) => {
         event.preventDefault();
         const data = {
@@ -44,6 +49,7 @@ function CommentForm(props) {
             });
     }
 
+    //Redirects to thread page with location parameters
     const redirectUpdate = (data) => {
         console.log(data);
         Navigate("/threads/" + thread_id, { state: { typeNotification: "commentEdited" } });
@@ -68,6 +74,7 @@ function CommentForm(props) {
     );
 }
 
+//Main container for edit comment page
 export default function EditComment() {
     const state = useLocation().state;
     const accessLevel = state ? state.access : null;
@@ -78,6 +85,8 @@ export default function EditComment() {
     const user_id = useSelector(state => state.id);
     const comments = UseFetch("http://localhost:4000/forum_threads/" + thread_id + "/comments");
     console.log("http://localhost:4000/forum_threads/" + thread_id + "/comments");
+
+    //Checks if comment exists and if user is allowed to edit it. If yes, 
     const comment = [...comments].find(comment => comment.id === id);
     if (comment && (comment.User_id === user_id || accessLevel === "moderator")) {
         return (
@@ -92,6 +101,6 @@ export default function EditComment() {
             </>
         );
     } else {
-        Navigate("/");
+        Navigate("/", { state: { typeNotification: "permissionDenied" } });
     }
 }

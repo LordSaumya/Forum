@@ -1,3 +1,4 @@
+//Imports
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
@@ -31,6 +32,9 @@ import { useSelector } from 'react-redux';
 import { CheckIcon, WarningIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon, CloseIcon } from '@chakra-ui/icons';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
+//Body
+
+//Form for creating a new comment
 function CommentForm() {
     const navigate = useNavigate();
     const [content, setContent] = useState("");
@@ -39,6 +43,7 @@ function CommentForm() {
     const user_id = useSelector(state => state.id);
     const threadID = useParams().id;
 
+    //Creates new comment
     const handleCreateComment = (event) => {
         if (!isContentError) {
             event.preventDefault();
@@ -58,6 +63,7 @@ function CommentForm() {
         }
     }
 
+    //Refreshes page with location parameters
     const refreshCreate = (data) => {
         console.log("Refreshing page")
         console.log(data);
@@ -80,6 +86,7 @@ function CommentForm() {
     );
 }
 
+//Container for thread
 function ThreadContainer(props) {
     const Navigate = useNavigate();
     const [show, setShow] = React.useState(false)
@@ -89,11 +96,7 @@ function ThreadContainer(props) {
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     const isMod = mods.includes(author.username);
 
-    const redirectDelete = (data) => {
-        console.log(data);
-        Navigate("/", { state: { typeNotification: "threadDeleted" } });
-    }
-
+    //Deletes thread
     const handleDelete = (event) => {
         console.log(props.id)
         if (window.confirm("Are you sure you want to delete this thread?")) {
@@ -108,6 +111,13 @@ function ThreadContainer(props) {
                 .catch(err => console.log(err));
         }
     }
+
+    //Redirects user to home page.
+    const redirectDelete = (data) => {
+        console.log(data);
+        Navigate("/", { state: { typeNotification: "threadDeleted" } });
+    }
+
     return (
         <div className='ql-editor' style={{ margin: "0px", padding: "0px" }}>
             <Container boxShadow="md" minWidth="90%" padding="10px" name="threadContainer" marginBottom="10px" border={isMod ? "1px" : "0px"} borderColor={isMod ? "gold" : "white"}>
@@ -128,6 +138,7 @@ function ThreadContainer(props) {
                 <Button size='sm' onClick={handleToggle} mt='1rem'>
                     Show {show ? 'less' : 'all'}
                 </Button>
+                {/* Only renders edit and delete options if the thread was created by the user */}
                 {props.User_id === useSelector(state => state.id) ? (
                     <>
                         <Divider paddingTop="10px" />
@@ -142,6 +153,7 @@ function ThreadContainer(props) {
     );
 }
 
+//Container for comments
 function CommentContainer(props) {
     const Navigate = useNavigate();
     const timeAgo = moment(props.date).fromNow();
@@ -149,11 +161,7 @@ function CommentContainer(props) {
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     const isMod = mods.includes(author.username);
 
-    const refreshDelete = (data) => {
-        console.log(data);
-        Navigate("/ParamNavigator", { state: { typeNotification: "commentDeleted", page: "threads/" + props.threadID } });
-    }
-
+    //Deletes comment
     const handleDelete = (event) => {
         console.log(props.id)
         if (window.confirm("Are you sure you want to delete this comment?")) {
@@ -167,6 +175,12 @@ function CommentContainer(props) {
                 .then(data => refreshDelete(data))
                 .catch(err => console.log(err));
         }
+    }
+
+    //Refreshes page with location parameters
+    const refreshDelete = (data) => {
+        console.log(data);
+        Navigate("/ParamNavigator", { state: { typeNotification: "commentDeleted", page: "threads/" + props.threadID } });
     }
 
 
@@ -185,6 +199,7 @@ function CommentContainer(props) {
                 <Divider paddingTop="10px" />
                 <Box padding="10px" dangerouslySetInnerHTML={{ __html: props.content }} name="commentContent">
                 </Box>
+                {/* Only renders edit and delete options if the comment was created by the user */}
                 {props.user_id === useSelector(state => state.id) ? (
                     <>
                         <Divider paddingTop="10px" />
@@ -199,9 +214,8 @@ function CommentContainer(props) {
     );
 }
 
-
+// Main container for the thread page
 export default function Thread() {
-    const navigate = useNavigate();
     const threadID = useParams().id;
     const [showForm, setShowForm] = React.useState(false)
     const thread = UseFetch("http://localhost:4000/forum_threads/" + threadID);
@@ -209,6 +223,7 @@ export default function Thread() {
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
+    // Provides toast functionality using location parameters.
     useEffect(() => {
         if (notif) {
             let [toastTitle, toastDesc, toastStatus] = [null, null, null];
@@ -248,6 +263,7 @@ export default function Thread() {
         }
     }, []);
 
+    //Toggles the comment form
     let btnText = showForm
         ? (<Text style={{ display: "inline" }}><CloseIcon style={{ display: "inline" }} /><Text style={{ display: "inline" }}>&nbsp;&nbsp;Close editor</Text></Text>)
         : (<Text style={{ display: "inline" }}><ChatIcon style={{ display: "inline" }} /><Text style={{ display: "inline" }}>&nbsp;&nbsp;Add a comment</Text></Text>)
@@ -260,6 +276,7 @@ export default function Thread() {
     const [sort_by, setSort_by] = React.useState("date");
     const [reverse, setReverse] = React.useState(false);
 
+    // Sorts comments by date or content
     const sortedComments = commentsData ? commentsData.sort((a, b) => {
         if (sort_by === "date") {
             return reverse ? new Date(b.created_at) - new Date(a.created_at) : new Date(a.created_at) - new Date(b.created_at);
@@ -270,6 +287,7 @@ export default function Thread() {
         }
     }) : null;
 
+    // Search function for comments (by content)
     function Search(item) {
         var comment = document.getElementsByName("commentContainer");
         var numResults = 0;
@@ -292,6 +310,7 @@ export default function Thread() {
         }
     }
 
+    // Toggles the visibility of the scroll to top button
     const [visible, setVisible] = useState(false)
     const toggleVisible = () => {
         const scrolled = document.documentElement.scrollTop;
@@ -303,6 +322,7 @@ export default function Thread() {
         }
     }
     window.addEventListener('scroll', toggleVisible);
+    
     return (
         <Box>
             <Navbar currentPage="home" />

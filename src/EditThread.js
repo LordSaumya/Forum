@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { CheckIcon, WarningIcon} from '@chakra-ui/icons';
-import {useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 function ThreadForm(props) {
     const Navigate = useNavigate();

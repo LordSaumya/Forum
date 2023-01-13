@@ -1,3 +1,4 @@
+//Imports
 import React, { useEffect } from 'react';
 import {
     Button,
@@ -22,10 +23,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const bcrypt = require('bcryptjs');
 
+// Body
+
+// Main container for registration page
 export default function Registration() {
     const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
+
+    //Provides toast functionality with location parameters
     useEffect(() => {
         if (notif) {
             let [toastTitle, toastDesc, toastStatus] = [null, null, null];
@@ -56,6 +62,7 @@ export default function Registration() {
             notif = null;
         }
     }, []);
+
     return (
         <Box align="center">
             <Flex width="100%" justify="center" margin="20px" align="center"><img style={{ verticalAlign: "centre" }} src={LogoImage} alt="Logo" width="90px" /><Heading size="2xl" margin="20px">HighGear</Heading>
@@ -81,6 +88,7 @@ export default function Registration() {
     );
 }
 
+//Sign up form
 function SignUp() {
     const dispatch = useDispatch();
     const Navigate = useNavigate();
@@ -94,6 +102,7 @@ function SignUp() {
     console.log(usedUsernames);
     const usedEmails = userData ? userData.map((user) => user.email) : [];
 
+    //Stores user in the Redux store and navigates to the home page
     function signupRedux(data) {
         const action = { type: "LOGIN", username: data.username, id: data.id };
         console.log(data.username);
@@ -126,12 +135,15 @@ function SignUp() {
     }
     const isConfirmPasswordError = confirmPasswordInput !== passwordInput;
 
+    //Sends request to create the new user account.
     const handleSubmit = (event) => {
         console.log("Submitted");
         event.preventDefault();
         if (!isPasswordError && !isConfirmPasswordError && !isEmailError && !isUsernameError) {
+            //Hashes the password before sending it to the server
             const salt = bcrypt.genSaltSync(10);
             const hash = bcrypt.hashSync(passwordInput, salt);
+
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -178,6 +190,7 @@ function SignUp() {
     );
 }
 
+//Login form
 function Login() {
     const Navigate = useNavigate();
     const dispatch = useDispatch();
@@ -194,6 +207,8 @@ function Login() {
     const handlePasswordChange = (event) => {
         setPasswordInput(event.target.value);
     }
+
+    //Compares hash of entered password to the hash stored in the database.
     const isPasswordError = isUsernameError || passwordInput.length === 0 || (userData[0] && !bcrypt.compareSync(passwordInput, userData[0].password));
 
     const handleSubmit = (event) => {
@@ -236,6 +251,7 @@ function Login() {
     );
 }
 
+//Toggles visibility between login and signup
 function changeTo(newPage) {
     if (newPage === "Signup") {
         document.getElementById("Heading").innerHTML = "Sign Up";

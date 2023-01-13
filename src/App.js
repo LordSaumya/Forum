@@ -1,3 +1,4 @@
+//Imports
 import React from 'react';
 import {
   ChakraProvider,
@@ -18,11 +19,16 @@ import ParamNavigator from './ParamNavigator.js';
 import { persistor, store } from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
+//Body
 export default function App() {
   return (
+    // Provides access to Redux store, and persists it till the user logs out
     <Provider store={store}>
       <PersistGate loading={<Spinner size="xl" />} persistor={persistor}>
+        {/* Provides access to Chakra UI */}
         <ChakraProvider theme={theme}>
+          {/* Provides routes to all of the pages in the app.
+          Handles wrong routes. */}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
