@@ -22,10 +22,6 @@ export default function Toast(notif) {
                 toastTitle = "Permission denied.";
                 toastDesc = "You do not have access to this page.";
                 toastStatus = "error";
-            } else if (notif === "ERROR") {
-                toastTitle = "Error";
-                toastDesc = "An unknown error has occured.";
-                toastStatus = "error";
             } else if (notif === "threadCreated") {
                 toastTitle = "Thread created";
                 toastDesc = "Your thread is live!";
@@ -70,6 +66,10 @@ export default function Toast(notif) {
                 toastTitle = "Account deleted.";
                 toastDesc = "Your account has been deleted.";
                 toastStatus = "warning";
+            } else if (notif === "bioEdited"){
+                toastTitle = "Bio edited.";
+                toastDesc = "Your bio has been edited.";
+                toastStatus = "success";
             } else {
                 toastTitle = "Error";
                 toastDesc = "An unknown error has occured.";

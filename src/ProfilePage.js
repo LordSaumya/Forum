@@ -1,3 +1,4 @@
+//Imports
 import React from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
@@ -5,7 +6,6 @@ import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import 'react-quill/dist/quill.snow.css';
 import moderatorList from './moderatorsList.json';
 import {
-  useToast,
   Box,
   Text,
   Link,
@@ -14,6 +14,7 @@ import {
   Divider,
   FormControl,
   FormLabel,
+  Spinner,
   FormErrorMessage,
   FormHelperText,
   Collapse,
@@ -299,6 +300,20 @@ function DeleteMod(props) {
   );
 }
 
+function BioContainer(props){
+  const bio = props.bio.trim().length !== 0 ? props.bio.trim() : "This user has not written a bio yet.";
+  return (
+    <>
+    <Box width="60%" align = "center">
+      <Text fontSize="sm" as = {props.bio ? "" : "i"}  color = "slateGrey" dangerouslySetInnerHTML={{ __html: bio }}></Text>
+      <br />
+      {props.isUser ? <><br /><Link href = {"/ProfilePage/" + props.username + "/EditBio"}><Button colorScheme="blue" size="sm" variant="outline"><FaPencilAlt />&nbsp;&nbsp;Edit bio</Button></Link></>
+        : <></>}
+    </Box>
+    </>
+  );
+}
+
 export default function Profile() {
   const userData = UseFetch('http://localhost:4000/users');
   const usernames = userData ? userData.map((user) => user.username) : [];
@@ -309,7 +324,6 @@ export default function Profile() {
   let threads = UseFetch('http://localhost:4000/forum_threads');
   threads = threads && userData ? threads.filter((thread) => thread.User_id === userData.find((user) => user.username === username).id) : [];
   const comments = UseFetch('http://localhost:4000/users/' + username + '/comments');
-  const toast = useToast();
   const location = useLocation();
   let notif = location.state ? location.state.typeNotification : null;
 
@@ -321,6 +335,8 @@ export default function Profile() {
       {!userData || usernames.includes(username) ? <></> : <Navigate to="/" />}
       <Box align="center">
         <Heading>{isUser ? "Your" : username + "'s"} Profile</Heading>< br />
+        <Heading size = "sm" paddingBottom="10px">About {isUser ? "you" : username}:</Heading>
+        <BioContainer username = {username} bio = {userData ? userData.find((user) => user.username === username).bio : "Loading..."} isUser = {isUser}/>
         <br />
         <Divider />
         <br />

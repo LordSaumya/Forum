@@ -16,6 +16,7 @@ import EditThread from './EditThread.js';
 import EditComment from './EditComment.js';
 import ModDashboard from './ModDashboard.js';
 import ParamNavigator from './ParamNavigator.js';
+import EditBio from './EditBio.js';
 import { persistor, store } from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -39,6 +40,7 @@ export default function App() {
               <Route path="/editComment/:ids" element={<EditComment />} />
               <Route path="/ModDashboard" element={<ModDashboard />} />
               <Route path="/ParamNavigator" element={<ParamNavigator />} />
+              <Route path="/ProfilePage/:username/EditBio" element={<EditBio />} />
               <Route path="*" element={<ParamNavigator />} />
             </Routes>
           </BrowserRouter>
