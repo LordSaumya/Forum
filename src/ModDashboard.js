@@ -1,30 +1,23 @@
+//Imports
 import React from 'react';
-import { useEffect } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
 import moment from 'moment';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import 'react-quill/dist/quill.snow.css';
 import moderatorList from './moderatorsList.json';
+import Toast from './Toast.js';
 import {
-    useToast,
     Box,
     Text,
     Link,
     Button,
     Heading,
     Divider,
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-    FormHelperText,
-    Input,
 } from '@chakra-ui/react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
-import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
-const bcrypt = require('bcryptjs');
 
 function ThreadContainer(props) {
     const Navigate = useNavigate();
@@ -111,7 +104,7 @@ function UserContainer(props) {
     const username = props.username;
     return (
         <Box display="flex" justifyContent="flex-start" alignItems="center" height="50px" border="1px" borderRadius="5px" padding="10px" margin="5px">
-            <Link maxWidth="40vw" overflow="hidden" href={"/ProfilePage/" + username}><Heading size="md">{username}</Heading></Link>
+            <Link minWidth = "10vw" maxWidth="40vw" overflow="hidden" href={"/ProfilePage/" + username}><Heading size="md">{username}</Heading></Link>
         </Box>
     );
 }
@@ -124,44 +117,9 @@ export default function ModDashboard() {
     userData = userData ? userData : [];
     const threads = UseFetch('http://localhost:4000/forum_threads');
 
-    const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : false;
-    useEffect(() => {
-        if (notif) {
-            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
-            if (notif === "threadDeleted") {
-                toastTitle = "Thread deleted";
-                toastDesc = "Your thread has been deleted.";
-                toastStatus = "error";
-            } else if (notif === "commentDeleted") {
-                toastTitle = "Comment deleted";
-                toastDesc = "Your comment has been deleted.";
-                toastStatus = "error";
-            } else if (notif === "emailChanged") {
-                toastTitle = "Email changed";
-                toastDesc = "Your email has been changed.";
-                toastStatus = "success";
-            } else if (notif === "passwordChanged") {
-                toastTitle = "Password changed";
-                toastDesc = "Your password has been changed.";
-                toastStatus = "success";
-            } else if (notif === "deletedAccount") {
-                toastTitle = "Account deleted.";
-                toastDesc = "The account has been deleted.";
-                toastStatus = "warning";
-            }
-
-            toast({
-                title: toastTitle,
-                description: toastDesc,
-                status: toastStatus,
-                duration: 5000,
-                isClosable: true,
-            });
-            notif = null;
-        }
-    }, []);
+    Toast(notif);
 
     return (
         <Box>

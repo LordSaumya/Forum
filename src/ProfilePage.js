@@ -1,5 +1,4 @@
 import React from 'react';
-import { useEffect } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
 import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
@@ -24,6 +23,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
 import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
 import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
+import Toast from './Toast.js';
 const bcrypt = require('bcryptjs');
 
 function ThreadContainer(props) {
@@ -258,7 +258,7 @@ function DeleteAccount() {
   }
   return (
     <Box width="60%">
-      <Text fontSize="sm" color="red.500"><WarningIcon />{isMod ? " As a moderator, you may not delete your account" : "This action is irreversible. All of your content will be deleted."}</Text><br />
+      <Text fontSize="sm" color="red.500"><WarningIcon />{isMod ? " As a moderator, you may not delete your account" : " This action is irreversible. All of your content will be deleted."}</Text><br />
       {!isMod ?
         (<>
           <FormControl id="password" isInvalid={isPasswordError} isRequired>
@@ -313,38 +313,7 @@ export default function Profile() {
   const location = useLocation();
   let notif = location.state ? location.state.typeNotification : null;
 
-  //Provides Toast functionality with location parameters
-  useEffect(() => {
-    if (notif) {
-      let [toastTitle, toastDesc, toastStatus] = [null, null, null];
-      if (notif === "threadDeleted") {
-        toastTitle = "Thread deleted";
-        toastDesc = "Your thread has been deleted.";
-        toastStatus = "error";
-      } else if (notif === "commentDeleted") {
-        toastTitle = "Comment deleted";
-        toastDesc = "Your comment has been deleted.";
-        toastStatus = "error";
-      } else if (notif === "emailChanged") {
-        toastTitle = "Email changed";
-        toastDesc = "Your email has been changed.";
-        toastStatus = "success";
-      } else if (notif === "passwordChanged") {
-        toastTitle = "Password changed";
-        toastDesc = "Your password has been changed.";
-        toastStatus = "success";
-      }
-
-      toast({
-        title: toastTitle,
-        description: toastDesc,
-        status: toastStatus,
-        duration: 5000,
-        isClosable: true,
-      });
-      notif = null;
-    }
-  }, []);
+  Toast(notif);
 
   return (
     <Box>
@@ -367,7 +336,7 @@ export default function Profile() {
           </Box>
           <Box align="center" flex="50%">
             {comments ? <><Heading size="md">Comments</Heading><br /></> : <></>}
-            <div style={{ overflowY: "scroll", whiteSpace: "nowrap", maxHeight: "40%", justifyContent: "center", display: "inline-block" }}>
+            <div style={{ overflowY: "scroll", whiteSpace: "nowrap", maxHeight: "400px", overflowX: "hidden", justifyContent: "center", display: "inline-block" }}>
               {comments ? comments.map((comment) => <CommentContainer key={comment.id} ForumThread_id={comment.ForumThread_id} id={comment.id} content={comment.content} />) : <></>}
             </div>
             {comments ? (comments.length === 0 ? <Text>No comments posted</Text> : <></>) : <></>}

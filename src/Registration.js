@@ -20,6 +20,8 @@ import UseFetch from './UseFetch';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Toast from './Toast.js';
+import { is } from 'immutable';
 
 const bcrypt = require('bcryptjs');
 
@@ -27,41 +29,11 @@ const bcrypt = require('bcryptjs');
 
 // Main container for registration page
 export default function Registration() {
-    const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
     //Provides toast functionality with location parameters
-    useEffect(() => {
-        if (notif) {
-            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
-            if (notif === "loggedOut") {
-                toastTitle = "Logged out.";
-                toastDesc = "You have succesfully logged out.";
-                toastStatus = "success";
-            } else if (notif === "notLoggedIn") {
-                toastTitle = "Not logged in.";
-                toastDesc = "You are not logged in.";
-                toastStatus = "error";
-            } else if (notif === "deletedAccount") {
-                toastTitle = "Account deleted.";
-                toastDesc = "Your account has been deleted.";
-                toastStatus = "warning";
-            } else if (notif === "ERROR") {
-                toastTitle = "Error";
-                toastDesc = "An unknown error has occured.";
-                toastStatus = "error";
-            }
-            toast({
-                title: toastTitle,
-                description: toastDesc,
-                status: toastStatus,
-                duration: 5000,
-                isClosable: true,
-            });
-            notif = null;
-        }
-    }, []);
+    Toast(notif);
 
     return (
         <Box align="center">
@@ -133,7 +105,7 @@ function SignUp() {
     const handleConfirmPasswordChange = (event) => {
         setConfirmPasswordInput(event.target.value);
     }
-    const isConfirmPasswordError = confirmPasswordInput !== passwordInput;
+    const isConfirmPasswordError = !isPasswordError && (confirmPasswordInput !== passwordInput);
 
     //Sends request to create the new user account.
     const handleSubmit = (event) => {
@@ -182,7 +154,7 @@ function SignUp() {
                     {!isConfirmPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your passwords match</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The passwords must match</FormErrorMessage>)}
                 </FormControl>
                 <br />
-                <Button colorScheme="blue" type="submit">
+                <Button colorScheme={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError ? "red" : "green"} type="submit" disabled={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError}>
                     Sign Up
                 </Button>
             </form>
@@ -243,7 +215,7 @@ function Login() {
                     <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
                     {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;The password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The password is incorrect</FormErrorMessage>)}
                 </FormControl><br />
-                <Button colorScheme="blue" type="submit">
+                <Button colorScheme={isUsernameError || isPasswordError ? "red" : "green"} type="submit" disabled={isUsernameError || isPasswordError}>
                     Login
                 </Button>
             </form>

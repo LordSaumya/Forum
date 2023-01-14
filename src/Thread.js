@@ -1,5 +1,5 @@
 //Imports
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
@@ -16,7 +16,6 @@ import {
     Select,
     Button,
     Container,
-    useToast,
     Heading,
     Divider,
     FormControl,
@@ -31,6 +30,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useSelector } from 'react-redux';
 import { CheckIcon, WarningIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon, CloseIcon } from '@chakra-ui/icons';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import Toast from './Toast.js';
 
 //Body
 
@@ -155,11 +155,13 @@ function ThreadContainer(props) {
 
 //Container for comments
 function CommentContainer(props) {
+    //TODO: Add OP badge
     const Navigate = useNavigate();
     const timeAgo = moment(props.date).fromNow();
     const author = UseFetch("http://localhost:4000/users/" + props.user_id);
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     const isMod = mods.includes(author.username);
+    const isAuthor = props.user_id === props.thread_author_id;
 
     //Deletes comment
     const handleDelete = (event) => {
@@ -192,6 +194,14 @@ function CommentContainer(props) {
                     <Badge ml='1' colorScheme='yellow' float="right" name="mod" top="2px">
                         Moderator Comment
                     </Badge>
+                    {isAuthor ? <></> : <br />}
+                </>
+                    : <></>
+                }
+                {isAuthor ? <>
+                    <Badge ml='1' colorScheme='blue' float="right" name="author" top="2px">
+                        OP
+                    </Badge>
                     <br />
                 </>
                     : <></>
@@ -219,49 +229,11 @@ export default function Thread() {
     const threadID = useParams().id;
     const [showForm, setShowForm] = React.useState(false)
     const thread = UseFetch("http://localhost:4000/forum_threads/" + threadID);
-    const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
     // Provides toast functionality using location parameters.
-    useEffect(() => {
-        if (notif) {
-            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
-            if (notif === "threadCreated") {
-                toastTitle = "Thread created";
-                toastDesc = "Your thread is live!";
-                toastStatus = "success";
-            } else if (notif === "threadEdited") {
-                toastTitle = "Thread edited";
-                toastDesc = "Your thread has been edited!";
-                toastStatus = "success";
-            } else if (notif === "commentEdited") {
-                toastTitle = "Comment edited";
-                toastDesc = "Your comment has been edited!";
-                toastStatus = "success";
-            } else if (notif === "changesDiscarded") {
-                toastTitle = "Changes discarded";
-                toastDesc = "Your changes have been discarded";
-                toastStatus = "error";
-            } else if (notif === "commentDeleted") {
-                toastTitle = "Comment deleted";
-                toastDesc = "Your comment has been deleted";
-                toastStatus = "error";
-            } else if (notif === "commentCreated") {
-                toastTitle = "Comment created";
-                toastDesc = "Your comment has been posted";
-                toastStatus = "success";
-            }
-            toast({
-                title: toastTitle,
-                description: toastDesc,
-                status: toastStatus,
-                duration: 5000,
-                isClosable: true,
-            });
-            notif = null;
-        }
-    }, []);
+    Toast(notif);
 
     //Toggles the comment form
     let btnText = showForm
@@ -322,7 +294,7 @@ export default function Thread() {
         }
     }
     window.addEventListener('scroll', toggleVisible);
-    
+
     return (
         <Box>
             <Navbar currentPage="home" />
@@ -347,7 +319,7 @@ export default function Thread() {
                 </Box>
             </Collapse>
             <Box align="center" id="noResults" style={{ display: "none" }}><Text>No results found</Text></Box>
-            {sortedComments ? sortedComments.map((com) => <CommentContainer id={com.id} date={com.created_at} user_id={com.User_id} key={com.id} content={com.content} threadID={com.ForumThread_id} />) : (<Box align="center"><Spinner size="xl" /></Box>)}
+            {sortedComments ? sortedComments.map((com) => <CommentContainer thread_author_id = {thread.User_id} id={com.id} date={com.created_at} user_id={com.User_id} key={com.id} content={com.content} threadID={com.ForumThread_id} />) : (<Box align="center"><Spinner size="xl" /></Box>)}
             <br /><Box align="center" float="left" style={{ display: "inline" }}><Button id="scrollToTopBtn" bottom="10px" position="fixed" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} style={{ display: visible ? "inline" : "none" }}><FaArrowCircleUp style={{ display: "inline" }} />&nbsp;Scroll to Top</Button></Box>
         </Box>
     );

@@ -1,5 +1,5 @@
 //Imports
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import Navbar from './Navbar.js';
 import UseFetch from './UseFetch.js';
@@ -26,10 +26,10 @@ import {
     FormHelperText,
     Collapse,
     Input,
-    useToast,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
+import Toast from './Toast.js';
 import { CheckIcon, WarningIcon, AddIcon, ChatIcon, TriangleDownIcon, TriangleUpIcon, Search2Icon } from '@chakra-ui/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -147,45 +147,11 @@ function ThreadContainer(props) {
 
 // Main container for home page
 export default function Home() {
-    const toast = useToast();
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
     // Provides toast functionality using location parameters.
-    useEffect(() => {
-        if (notif) {
-            let [toastTitle, toastDesc, toastStatus] = [null, null, null];
-            if (notif === "accountCreated") {
-                toastTitle = "Account created.";
-                toastDesc = "Your account has been created";
-                toastStatus = "success";
-            } else if (notif === "loggedIn") {
-                toastTitle = "Logged in.";
-                toastDesc = "You are now logged in.";
-                toastStatus = "success";
-            } else if (notif === "threadDeleted") {
-                toastTitle = "Thread deleted.";
-                toastDesc = "The thread has been deleted.";
-                toastStatus = "error";
-            } else if (notif === "permissionDenied") {
-                toastTitle = "Permission denied.";
-                toastDesc = "You do not have access to this page.";
-                toastStatus = "error";
-            } else if (notif === "ERROR") {
-                toastTitle = "Error";
-                toastDesc = "An unknown error has occured.";
-                toastStatus = "error";
-            }
-            toast({
-                title: toastTitle,
-                description: toastDesc,
-                status: toastStatus,
-                duration: 5000,
-                isClosable: true,
-            });
-            notif = null;
-        }
-    }, []);
+    Toast(notif);
 
     //Toggles visibility between form and threads
     const [showForm, setShowForm] = React.useState(false)
