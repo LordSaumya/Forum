@@ -24,7 +24,7 @@ function ThreadForm(props) {
     const [title, setTitle] = useState(props.title);
     const [tag, setTag] = useState(props.tag);
 
-    const threadsData = UseFetch("http://localhost:4000/forum_threads");
+    const threadsData = UseFetch("https://highgear.herokuapp.com/forum_threads");
     let usedTags = threadsData ? threadsData.map((thread) => thread.tag) : [];
     usedTags = Array.from(new Set(usedTags));
 
@@ -41,7 +41,7 @@ function ThreadForm(props) {
             tag: tag,
             user_id: user_id,
         }
-        fetch('http://localhost:4000/forum_threads/' + props.id, {
+        fetch('https://highgear.herokuapp.com/forum_threads/' + props.id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function EditThread() {
     const Navigate = useNavigate();
     const id = useParams().id;
     const user_id = useSelector(state => state.id);
-    const thread = UseFetch("http://localhost:4000/forum_threads/" + id);
+    const thread = UseFetch("https://highgear.herokuapp.com/forum_threads/" + id);
     if (thread && (thread.User_id === user_id || accessLevel === "moderator")) {
         return (
             <>

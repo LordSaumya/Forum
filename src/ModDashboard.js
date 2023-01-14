@@ -21,13 +21,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 function ThreadContainer(props) {
     const Navigate = useNavigate();
-    const author = UseFetch("http://localhost:4000/users/" + props.User_id);
-    const comments = UseFetch("http://localhost:4000/forum_threads/" + props.id + "/comments");
+    const author = UseFetch("https://highgear.herokuapp.com/users/" + props.User_id);
+    const comments = UseFetch("https://highgear.herokuapp.com/forum_threads/" + props.id + "/comments");
     const timeAgo = moment(props.date).fromNow();
 
     const handleDelete = () => {
         if (window.confirm("Are you sure you want to delete this thread?")) {
-            fetch('http://localhost:4000/forum_threads/' + props.id, {
+            fetch('https://highgear.herokuapp.com/forum_threads/' + props.id, {
                 method: 'DELETE',
             })
                 .then((response) => response.json())
@@ -64,11 +64,11 @@ function ThreadContainer(props) {
 function CommentContainer(props) {
     const Navigate = useNavigate();
     const timeAgo = moment(props.date).fromNow();
-    const author = UseFetch("http://localhost:4000/users/" + props.user_id);
+    const author = UseFetch("https://highgear.herokuapp.com/users/" + props.user_id);
 
     const handleDelete = () => {
         if (window.confirm("Are you sure you want to delete this comment?")) {
-            fetch('http://localhost:4000/forum_threads/' + props.ForumThread_id + '/comments/' + props.id, {
+            fetch('https://highgear.herokuapp.com/forum_threads/' + props.ForumThread_id + '/comments/' + props.id, {
                 method: 'DELETE',
             })
                 .then((response) => response.json())
@@ -113,9 +113,9 @@ export default function ModDashboard() {
     const navigate = useNavigate();
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     mods.includes(useSelector(state => state.username)) ? console.log("User is a moderator") : navigate("/", { state: { typeNotification: "permissionDenied" } });;
-    let userData = UseFetch('http://localhost:4000/users');
+    let userData = UseFetch('https://highgear.herokuapp.com/users');
     userData = userData ? userData : [];
-    const threads = UseFetch('http://localhost:4000/forum_threads');
+    const threads = UseFetch('https://highgear.herokuapp.com/forum_threads');
 
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : false;

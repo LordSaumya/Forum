@@ -1,5 +1,5 @@
 //Imports
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     Button,
     FormControl,
@@ -9,7 +9,6 @@ import {
     Stack,
     Box,
     Flex,
-    useToast,
     Heading,
     Divider,
     FormErrorMessage,
@@ -69,7 +68,7 @@ function SignUp() {
     const [passwordInput, setPasswordInput] = React.useState("");
     const [confirmPasswordInput, setConfirmPasswordInput] = React.useState("");
 
-    const userData = UseFetch("http://localhost:4000/users");
+    const userData = UseFetch("https://highgear.herokuapp.com/users");
     const usedUsernames = userData ? userData.map((user) => user.username) : [];
     console.log(usedUsernames);
     const usedEmails = userData ? userData.map((user) => user.email) : [];
@@ -121,7 +120,7 @@ function SignUp() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: usernameInput, email: emailInput, password: hash })
             };
-            fetch('http://localhost:4000/users', requestOptions)
+            fetch('https://highgear.herokuapp.com/users', requestOptions)
                 .then(response => response.json())
                 .then(data => signupRedux(data))
                 .catch((e) => { console.log(JSON.stringify(e)) });
@@ -169,7 +168,7 @@ function Login() {
     const [usernameInput, setUsernameInput] = React.useState("");
     const [passwordInput, setPasswordInput] = React.useState("");
 
-    let userData = UseFetch("http://localhost:4000/users/s/" + usernameInput);
+    let userData = UseFetch("https://highgear.herokuapp.com/users/s/" + usernameInput);
 
     const handleUsernameChange = (event) => {
         setUsernameInput(event.target.value);

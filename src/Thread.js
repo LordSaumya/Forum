@@ -53,7 +53,7 @@ function CommentForm() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ User_id: user_id, ForumThread_id: threadID, content: content })
             };
-            fetch('http://localhost:4000/forum_threads/' + threadID + "/comments", requestOptions)
+            fetch('https://highgear.herokuapp.com/forum_threads/' + threadID + "/comments", requestOptions)
                 .then(response => response.json())
                 .then(data => refreshCreate(data))
                 .catch(err => console.log(err));
@@ -91,7 +91,7 @@ function ThreadContainer(props) {
     const Navigate = useNavigate();
     const [show, setShow] = React.useState(false)
     const timeAgo = moment(props.date).fromNow();
-    const author = UseFetch("http://localhost:4000/users/" + props.User_id);
+    const author = UseFetch("https://highgear.herokuapp.com/users/" + props.User_id);
     const handleToggle = () => setShow(!show)
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     const isMod = mods.includes(author.username);
@@ -105,7 +105,7 @@ function ThreadContainer(props) {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             };
-            fetch('http://localhost:4000/forum_threads/' + props.id, requestOptions)
+            fetch('https://highgear.herokuapp.com/forum_threads/' + props.id, requestOptions)
                 .then(response => response.json())
                 .then(data => redirectDelete(data))
                 .catch(err => console.log(err));
@@ -158,7 +158,7 @@ function CommentContainer(props) {
     //TODO: Add OP badge
     const Navigate = useNavigate();
     const timeAgo = moment(props.date).fromNow();
-    const author = UseFetch("http://localhost:4000/users/" + props.user_id);
+    const author = UseFetch("https://highgear.herokuapp.com/users/" + props.user_id);
     const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
     const isMod = mods.includes(author.username);
     const isAuthor = props.user_id === props.thread_author_id;
@@ -172,7 +172,7 @@ function CommentContainer(props) {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             };
-            fetch("http://localhost:4000/forum_threads/" + props.threadID + "/comments/" + props.id, requestOptions)
+            fetch("https://highgear.herokuapp.com/forum_threads/" + props.threadID + "/comments/" + props.id, requestOptions)
                 .then(response => response.json())
                 .then(data => refreshDelete(data))
                 .catch(err => console.log(err));
@@ -228,7 +228,7 @@ function CommentContainer(props) {
 export default function Thread() {
     const threadID = useParams().id;
     const [showForm, setShowForm] = React.useState(false)
-    const thread = UseFetch("http://localhost:4000/forum_threads/" + threadID);
+    const thread = UseFetch("https://highgear.herokuapp.com/forum_threads/" + threadID);
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
@@ -244,7 +244,7 @@ export default function Thread() {
         setShowForm(!showForm)
     }
 
-    const commentsData = UseFetch("http://localhost:4000/forum_threads/" + threadID + "/comments");
+    const commentsData = UseFetch("https://highgear.herokuapp.com/forum_threads/" + threadID + "/comments");
     const [sort_by, setSort_by] = React.useState("date");
     const [reverse, setReverse] = React.useState(false);
 

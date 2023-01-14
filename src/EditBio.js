@@ -37,7 +37,7 @@ function BioForm(props) {
         }
         console.log("data", data);
         console.log("user_id", user_id);
-        fetch('http://localhost:4000/users/' + user_id, {
+        fetch('https://highgear.herokuapp.com/users/' + user_id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export default function EditBio() {
     const Navigate = useNavigate();
 
     //Fetches user data
-    const user = UseFetch('http://localhost:4000/users/s/' + username)[0];
+    const user = UseFetch('https://highgear.herokuapp.com/users/s/' + username)[0];
 
     if (user && (username === currentUser)) {
         return (

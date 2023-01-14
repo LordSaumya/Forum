@@ -35,7 +35,7 @@ function CommentForm(props) {
             content: content,
             user_id: user_id,
         }
-        fetch('http://localhost:4000/forum_threads/' + thread_id + '/comments/' + props.id, {
+        fetch('https://highgear.herokuapp.com/forum_threads/' + thread_id + '/comments/' + props.id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,8 +83,8 @@ export default function EditComment() {
     const thread_id = parseInt(ids[0]);
     const id = parseInt(ids[1]);
     const user_id = useSelector(state => state.id);
-    const comments = UseFetch("http://localhost:4000/forum_threads/" + thread_id + "/comments");
-    console.log("http://localhost:4000/forum_threads/" + thread_id + "/comments");
+    const comments = UseFetch("https://highgear.herokuapp.com/forum_threads/" + thread_id + "/comments");
+    console.log("https://highgear.herokuapp.com/forum_threads/" + thread_id + "/comments");
 
     //Checks if comment exists and if user is allowed to edit it. If yes, 
     const comment = [...comments].find(comment => comment.id === id);

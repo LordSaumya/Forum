@@ -34,7 +34,7 @@ function ThreadContainer(props) {
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this thread?")) {
-      fetch('http://localhost:4000/forum_threads/' + props.id, {
+      fetch('https://highgear.herokuapp.com/forum_threads/' + props.id, {
         method: 'DELETE',
       })
         .then((response) => response.json())
@@ -77,7 +77,7 @@ function CommentContainer(props) {
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
-      fetch('http://localhost:4000/forum_threads/' + props.ForumThread_id + '/comments/' + props.id, {
+      fetch('https://highgear.herokuapp.com/forum_threads/' + props.ForumThread_id + '/comments/' + props.id, {
         method: 'DELETE',
       })
         .then((response) => response.json())
@@ -117,7 +117,7 @@ function EditEmail() {
   const id = useSelector(state => state.id);
   const username = useSelector(state => state.username);
   const Navigate = useNavigate();
-  const userData = UseFetch('http://localhost:4000/users/');
+  const userData = UseFetch('https://highgear.herokuapp.com/users/');
   const usedEmails = userData ? userData.map((user) => user.email) : [];
   const isEmailError = usedEmails.includes(emailInput) || emailInput === "" || !emailInput.includes("@") || !emailInput.includes(".") || emailInput.indexOf("@") > emailInput.indexOf(".") || emailInput.indexOf("@") === 0 || emailInput.indexOf(".") === 0 || emailInput.indexOf("@") === emailInput.length - 1 || emailInput.indexOf(".") === emailInput.length - 1 || emailInput.indexOf("@") === emailInput.indexOf(".") - 1 || !emailInput.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
@@ -132,7 +132,7 @@ function EditEmail() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailInput })
       };
-      fetch('http://localhost:4000/users/' + id, requestOptions)
+      fetch('https://highgear.herokuapp.com/users/' + id, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Email changed successfully!");
@@ -163,7 +163,7 @@ function EditPassword() {
   const id = useSelector(state => state.id);
   const navigate = useNavigate();
   const username = useSelector(state => state.username);
-  const userData = UseFetch('http://localhost:4000/users/' + id);
+  const userData = UseFetch('https://highgear.herokuapp.com/users/' + id);
   const [oldPasswordInput, setOldPasswordInput] = React.useState('');
   const [newPasswordInput, setNewPasswordInput] = React.useState('');
   const isOldPasswordError = oldPasswordInput.length === 0 || (userData && !bcrypt.compareSync(oldPasswordInput, userData.password));
@@ -185,7 +185,7 @@ function EditPassword() {
         //Hashes the new password before sending it to the server
         body: JSON.stringify({ password: bcrypt.hashSync(newPasswordInput, salt) })
       };
-      fetch('http://localhost:4000/users/' + id, requestOptions)
+      fetch('https://highgear.herokuapp.com/users/' + id, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Password changed successfully!");
@@ -225,7 +225,7 @@ function DeleteAccount() {
   const isMod = mods.includes(useSelector(state => state.username));
 
   const [passwordInput, setPasswordInput] = React.useState('');
-  const userData = UseFetch('http://localhost:4000/users/' + id);
+  const userData = UseFetch('https://highgear.herokuapp.com/users/' + id);
   const isPasswordError = passwordInput.length === 0 || (userData && !bcrypt.compareSync(passwordInput, userData.password));
 
   const handlePasswordChange = (event) => {
@@ -244,7 +244,7 @@ function DeleteAccount() {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       };
-      fetch('http://localhost:4000/users/' + id, requestOptions)
+      fetch('https://highgear.herokuapp.com/users/' + id, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Account deleted successfully!");
@@ -273,7 +273,7 @@ function DeleteAccount() {
 }
 
 function DeleteMod(props) {
-  const user = UseFetch("http://localhost:4000/users/s/" + props.username)
+  const user = UseFetch("https://highgear.herokuapp.com/users/s/" + props.username)
   const Navigate = useNavigate();
   const id = user ? user[0].id : null;
   const handleDelete = () => {
@@ -282,7 +282,7 @@ function DeleteMod(props) {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       };
-      fetch('http://localhost:4000/users/' + id, requestOptions)
+      fetch('https://highgear.herokuapp.com/users/' + id, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Account deleted successfully!");
@@ -315,15 +315,15 @@ function BioContainer(props){
 }
 
 export default function Profile() {
-  const userData = UseFetch('http://localhost:4000/users');
+  const userData = UseFetch('https://highgear.herokuapp.com/users');
   const usernames = userData ? userData.map((user) => user.username) : [];
   const username = useParams().username;
   const mods = JSON.parse(JSON.stringify(moderatorList)).moderators;
   const isMod = mods.includes(useSelector(state => state.username));
   const isUser = useSelector(state => state.username) === username;
-  let threads = UseFetch('http://localhost:4000/forum_threads');
+  let threads = UseFetch('https://highgear.herokuapp.com/forum_threads');
   threads = threads && userData ? threads.filter((thread) => thread.User_id === userData.find((user) => user.username === username).id) : [];
-  const comments = UseFetch('http://localhost:4000/users/' + username + '/comments');
+  const comments = UseFetch('https://highgear.herokuapp.com/users/' + username + '/comments');
   const location = useLocation();
   let notif = location.state ? location.state.typeNotification : null;
 

@@ -43,7 +43,7 @@ function ThreadForm() {
     const Navigate = useNavigate();
 
     //Fetches existing tags
-    const threadsData = UseFetch("http://localhost:4000/forum_threads");
+    const threadsData = UseFetch("https://highgear.herokuapp.com/forum_threads");
     let usedTags = threadsData ? threadsData.map((thread) => thread.tag) : [];
     usedTags = Array.from(new Set(usedTags));
 
@@ -62,7 +62,7 @@ function ThreadForm() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ User_id: user_id, title: title, description: desc, tag: tag })
         };
-        fetch('http://localhost:4000/forum_threads', requestOptions)
+        fetch('https://highgear.herokuapp.com/forum_threads', requestOptions)
             .then(response => response.json())
             .then(data => refreshCreate(data))
             .catch(err => console.log(err));
@@ -109,7 +109,7 @@ function ThreadForm() {
 function ThreadContainer(props) {
     const [show, setShow] = React.useState(false)
     const timeAgo = moment(props.date).fromNow();
-    const author = UseFetch("http://localhost:4000/users/" + props.user_id);
+    const author = UseFetch("https://highgear.herokuapp.com/users/" + props.user_id);
 
     //Handles visibility of the content
     const handleToggle = () => setShow(!show)
@@ -165,7 +165,7 @@ export default function Home() {
         setShowThreads(!showThreads)
     }
 
-    const threadsData = UseFetch("http://localhost:4000/forum_threads");
+    const threadsData = UseFetch("https://highgear.herokuapp.com/forum_threads");
     const [sort_by, setSort_by] = React.useState("date");
     const [reverse, setReverse] = React.useState(false);
 
