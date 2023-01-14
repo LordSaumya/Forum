@@ -95,11 +95,11 @@ function ThreadForm() {
                     {!(isTagError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Great tag!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a tag</FormErrorMessage>)}
                     <br />Existing Tags:<br />
                     <div style={{ overflowX: "scroll", whiteSpace: "nowrap", maxWidth: "80%", justifyContent: "center", display: "inline-block" }}>
-                        {usedTags.map((tag) => <Button margin="5px" colorScheme="blue" key={tag} onClick={() => setTag(tag)}>{tag}</Button>)}
+                        {usedTags.map((tag) => <Button margin="5px" colorScheme="teal" key={tag} onClick={() => setTag(tag)}>{tag}</Button>)}
                     </div>
                 </FormControl>
                 <br />
-                <Button type="submit" colorScheme={isTitleError || isDescError || isTagError ? "red" : "green"} disabled={isTitleError || isDescError || isTagError}>Post Thread</Button>
+                <Button type="submit" colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} disabled={isTitleError || isDescError || isTagError}>Post Thread</Button>
             </form>
         </Container>
     );

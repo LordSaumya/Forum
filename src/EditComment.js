@@ -65,7 +65,7 @@ function CommentForm(props) {
                 </FormControl>
                 <br />
                 <Box display="flex" justifyContent="center" gap="3%">
-                    <Button colorScheme={isContentError ? "red" : "green"} type="submit" disabled={isContentError}>Update comment</Button>
+                    <Button colorScheme={isContentError ? "grey" : "teal"} type="submit" disabled={isContentError}>Update comment</Button>
                     <Button colorScheme="red" onClick={() => Navigate("/threads/" + thread_id, { state: { typeNotification: "changesDiscarded" } })}>Discard changes</Button>
                 </Box>
             </form>

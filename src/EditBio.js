@@ -71,7 +71,7 @@ function BioForm(props) {
                 </FormControl>
                 <Button
                     mt={4}
-                    colorScheme={isBioError ? "red" : "green"}
+                    colorScheme={isBioError ? "grey" : "teal"}
                     type="submit"
                     disabled={isBioError}
                 >

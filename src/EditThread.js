@@ -82,13 +82,13 @@ function ThreadForm(props) {
                     <Box align="center">
                         <br />Existing Tags:<br />
                         <div style={{ overflowX: "scroll", whiteSpace: "nowrap", maxWidth: "80%", justifyContent: "center", display: "inline-block" }}>
-                            {usedTags.map((tag) => <Button margin="5px" colorScheme="blue" key={tag} onClick={() => setTag(tag)}>{tag}</Button>)}
+                            {usedTags.map((tag) => <Button margin="5px" colorScheme="teal" key={tag} onClick={() => setTag(tag)}>{tag}</Button>)}
                         </div>
                     </Box>
                 </FormControl>
                 <br />
                 <Box display="flex" justifyContent="center" gap="3%">
-                    <Button colorScheme={isTitleError || isDescError || isTagError ? "red" : "green"} type="submit" disabled={isTitleError || isDescError || isTagError}>Update Thread</Button>
+                    <Button colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} type="submit" disabled={isTitleError || isDescError || isTagError}>Update Thread</Button>
                     <Button colorScheme="red" onClick={() => Navigate("/threads/" + props.id, { state: { typeNotification: "changesDiscarded" } })}>Discard changes</Button>
                 </Box>
             </form>

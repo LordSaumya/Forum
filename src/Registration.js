@@ -154,7 +154,7 @@ function SignUp() {
                     {!isConfirmPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your passwords match</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The passwords must match</FormErrorMessage>)}
                 </FormControl>
                 <br />
-                <Button colorScheme={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError ? "red" : "green"} type="submit" disabled={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError}>
+                <Button colorScheme={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError ? "grey" : "teal"} type="submit" disabled={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError}>
                     Sign Up
                 </Button>
             </form>
@@ -215,7 +215,7 @@ function Login() {
                     <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
                     {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;The password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The password is incorrect</FormErrorMessage>)}
                 </FormControl><br />
-                <Button colorScheme={isUsernameError || isPasswordError ? "red" : "green"} type="submit" disabled={isUsernameError || isPasswordError}>
+                <Button colorScheme={isUsernameError || isPasswordError ? "grey" : "teal"} type="submit" disabled={isUsernameError || isPasswordError}>
                     Login
                 </Button>
             </form>

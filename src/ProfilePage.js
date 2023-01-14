@@ -153,7 +153,7 @@ function EditEmail() {
           <Input type="email" placeholder="Email address" onChange={handleEmailChange} />
           {!isEmailError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;We will never share your email</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This email is invalid or already in use.</FormErrorMessage>)}
         </FormControl><br />
-        <Button onClick={handleEmailSubmit} colorScheme={isEmailError ? "red" : "green"} size="sm" variant="outline" disabled={isEmailError}>Submit</Button>
+        <Button onClick={handleEmailSubmit} colorScheme={isEmailError ? "grey" : "teal"} size="sm" variant="outline" disabled={isEmailError}>Submit</Button>
       </form>
     </Box>
   );
@@ -211,7 +211,7 @@ function EditPassword() {
           {!isNewPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your password is strong</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Your password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter and one number.</FormErrorMessage>)}
         </FormControl><br />
       </Collapse>
-      <Button onClick={handlePasswordSubmit} colorScheme={isOldPasswordError || isNewPasswordError ? "red" : "green"} size="sm" variant="outline" disabled={isOldPasswordError || isNewPasswordError}>Submit</Button>
+      <Button onClick={handlePasswordSubmit} colorScheme={isOldPasswordError || isNewPasswordError ? "grey" : "teal"} size="sm" variant="outline" disabled={isOldPasswordError || isNewPasswordError}>Submit</Button>
     </Box>
   );
 }
@@ -267,7 +267,7 @@ function DeleteAccount() {
             <Input type="password" placeholder="Password" onChange={handlePasswordChange} />
             {!isPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your password is correct</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;This password is incorrect.</FormErrorMessage>)}
           </FormControl><br />
-          <Button onClick={handleDeleteSubmit} colorScheme={isPasswordError ? "red" : "green"} size="sm" variant="outline" disabled={isPasswordError || isMod}>Submit</Button><br />
+          <Button onClick={handleDeleteSubmit} colorScheme={isPasswordError ? "grey" : "teal"} size="sm" variant="outline" disabled={isPasswordError || isMod}>Submit</Button><br />
         </>) : <></>
       } </Box>);
 }
@@ -307,7 +307,7 @@ function BioContainer(props){
     <Box width="60%" align = "center">
       <Text fontSize="sm" as = {props.bio ? "" : "i"}  color = "slateGrey" dangerouslySetInnerHTML={{ __html: bio }}></Text>
       <br />
-      {props.isUser ? <><br /><Link href = {"/ProfilePage/" + props.username + "/EditBio"}><Button colorScheme="blue" size="sm" variant="outline"><FaPencilAlt />&nbsp;&nbsp;Edit bio</Button></Link></>
+      {props.isUser ? <><br /><Link href = {"/ProfilePage/" + props.username + "/EditBio"}><Button colorScheme="teal" size="sm" variant="outline"><FaPencilAlt />&nbsp;&nbsp;Edit bio</Button></Link></>
         : <></>}
     </Box>
     </>

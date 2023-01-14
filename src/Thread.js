@@ -80,7 +80,7 @@ function CommentForm() {
                     {!(isContentError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Nice!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer comment</FormErrorMessage>)}
                 </FormControl>
                 <br />
-                <Button colorScheme={isContentError ? "red" : "green"} type="submit" disabled={isContentError}>Post Comment</Button>
+                <Button colorScheme={isContentError ? "grey" : "teal"} type="submit" disabled={isContentError}>Post Comment</Button>
             </form>
         </Container>
     );
@@ -144,7 +144,7 @@ function ThreadContainer(props) {
                         <Divider paddingTop="10px" />
                         <Box display="flex" justifyContent="center" gap="3%" margin="10px">
                             <Button colorScheme="red" onClick={handleDelete}>Delete Thread</Button>
-                            <Button colorScheme="blue" onClick={() => Navigate("/editThread/" + props.id)}>Edit Thread</Button>
+                            <Button colorScheme="teal" onClick={() => Navigate("/editThread/" + props.id)}>Edit Thread</Button>
                         </Box>
                     </>
                 ) : (<></>)}
@@ -215,7 +215,7 @@ function CommentContainer(props) {
                         <Divider paddingTop="10px" />
                         <Box display="flex" justifyContent="center" gap="3%" margin="10px">
                             <Button colorScheme="red" onClick={handleDelete}>Delete comment</Button>
-                            <Button colorScheme="blue" onClick={() => Navigate("/editComment/" + props.threadID + ":" + props.id)}>Edit comment</Button>
+                            <Button colorScheme="teal" onClick={() => Navigate("/editComment/" + props.threadID + ":" + props.id)}>Edit comment</Button>
                         </Box>
                     </>
                 ) : (<></>)}
