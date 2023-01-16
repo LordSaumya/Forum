@@ -42,7 +42,6 @@ function CommentForm() {
 
     const user_id = useSelector(state => state.id);
     const threadID = useParams().id;
-
     //Creates new comment
     const handleCreateComment = (event) => {
         if (!isContentError) {
@@ -227,8 +226,10 @@ function CommentContainer(props) {
 // Main container for the thread page
 export default function Thread() {
     const threadID = useParams().id;
+    console.log(1, threadID);
     const [showForm, setShowForm] = React.useState(false)
     const thread = UseFetch("https://highgear.herokuapp.com/forum_threads/" + threadID);
+    console.log(1, thread);
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
