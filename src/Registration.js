@@ -20,7 +20,6 @@ import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Toast from './Toast.js';
-import { is } from 'immutable';
 
 const bcrypt = require('bcryptjs');
 
