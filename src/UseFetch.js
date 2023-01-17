@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 // Function to fetch data using get request
 export default function UseFetch(url, request = "GET") {
     const [data, setData] = useState("");
+    useEffect(() => {
         fetch(url, {
           method: request,
         })
@@ -15,5 +16,6 @@ export default function UseFetch(url, request = "GET") {
             console.log(data);
             console.log(err.message);
           });
+      }, [url, request]);
     return data;
 }
