@@ -12,6 +12,7 @@ import {
     Text,
     Link,
     Button,
+    Spinner,
     Heading,
     Divider,
 } from '@chakra-ui/react';
@@ -57,7 +58,7 @@ function ThreadContainer(props) {
             <Link maxWidth="40vw" overflow="hidden" href={"/threads/" + props.id}><Heading size="md">{props.title}</Heading></Link>
             <Text fontSize="sm" color="gray.500">&nbsp;&nbsp;Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
         </Box>
-        {comments ? comments.map((comment) => <CommentContainer user_id={comment.User_id} id={comment.id} ForumThread_id={comment.ForumThread_id} content={comment.content} date={comment.created_at}></CommentContainer>) : <></>}
+        {comments ? comments.map((comment) => <CommentContainer user_id={comment.User_id} id={comment.id} ForumThread_id={comment.ForumThread_id} content={comment.content} date={comment.created_at}></CommentContainer>) : <Spinner />}
     </>);
 }
 
