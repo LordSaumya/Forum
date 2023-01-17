@@ -58,7 +58,7 @@ function ThreadContainer(props) {
             <Link maxWidth="40vw" overflow="hidden" href={"/threads/" + props.id}><Heading size="md">{props.title}</Heading></Link>
             <Text fontSize="sm" color="gray.500">&nbsp;&nbsp;Posted by <Link href={"/ProfilePage/" + (author ? author.username : "")} color="teal.500" >{author ? author.username : ""}</Link> {timeAgo}</Text>
         </Box>
-        {comments ? comments.map((comment) => <CommentContainer user_id={comment.User_id} id={comment.id} ForumThread_id={comment.ForumThread_id} content={comment.content} date={comment.created_at}></CommentContainer>) : <Spinner />}
+        {comments ? comments.map((comment) => <CommentContainer user_id={comment.User_id} id={comment.id} ForumThread_id={comment.ForumThread_id} content={comment.content} date={comment.created_at}></CommentContainer>) : <Spinner size = "lg" />}
     </>);
 }
 
@@ -137,7 +137,7 @@ export default function ModDashboard() {
                         <Box display="flex">
                             <Box align="center" flex="50%" borderRight="1px">
                                 <div style={{ overflowY: "scroll", overflowX: "hidden", whiteSpace: "nowrap", maxHeight: "400px", justifyContent: "center", display: "inline-block" }}>
-                                    {threads ? threads.map((thread) => <ThreadContainer key={thread.id} id={thread.id} title={thread.title} User_id={thread.User_id} date={thread.created_at} />) : <></>}
+                                    {threads ? threads.map((thread) => <ThreadContainer key={thread.id} id={thread.id} title={thread.title} User_id={thread.User_id} date={thread.created_at} />) : <Spinner size = "lg"/>}
                                 </div>
                                 {threads ? threads.length === 0 ? <Text>No content posted</Text> : <></> : <></>}
                             </Box>
@@ -149,7 +149,7 @@ export default function ModDashboard() {
                         <Box display="flex">
                             <Box align="center" flex="50%" borderRight="1px">
                                 <div style={{ overflowY: "scroll", overflowX: "hidden", whiteSpace: "nowrap", maxHeight: "400px", justifyContent: "center", display: "inline-block" }}>
-                                    {userData ? userData.map((user) => <UserContainer key={user.id} username={user.username} />) : <></>}
+                                    {userData ? userData.map((user) => <UserContainer key={user.id} username={user.username} />) : <Spinner size = "lg" />}
                                 </div>
                             </Box>
                         </Box>
