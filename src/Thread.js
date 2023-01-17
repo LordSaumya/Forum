@@ -49,9 +49,8 @@ function CommentForm() {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ User_id: user_id, forumthread_id: threadID, content: content })
+                body: JSON.stringify({ User_id: user_id, forumthread_id: parseInt(threadID), content: content })
             };
-            console.log(requestOptions);
             fetch('https://highgear.herokuapp.com/forum_threads/' + threadID + "/comments", requestOptions)
                 .then(response => response.json())
                 .then(data => refreshCreate(data))
@@ -244,7 +243,6 @@ export default function Thread() {
     }
 
     const commentsData = UseFetch("https://highgear.herokuapp.com/forum_threads/" + threadID + "/comments");
-    console.log(1,commentsData)
     const [sort_by, setSort_by] = React.useState("date");
     const [reverse, setReverse] = React.useState(false);
 
