@@ -226,10 +226,8 @@ function CommentContainer(props) {
 // Main container for the thread page
 export default function Thread() {
     const threadID = useParams().id;
-    console.log(1, threadID);
     const [showForm, setShowForm] = React.useState(false)
     const thread = UseFetch("https://highgear.herokuapp.com/forum_threads/" + threadID);
-    console.log(1, thread);
     const location = useLocation();
     let notif = location.state ? location.state.typeNotification : null;
 
@@ -246,6 +244,7 @@ export default function Thread() {
     }
 
     const commentsData = UseFetch("https://highgear.herokuapp.com/forum_threads/" + threadID + "/comments");
+    console.log(1,commentsData)
     const [sort_by, setSort_by] = React.useState("date");
     const [reverse, setReverse] = React.useState(false);
 
