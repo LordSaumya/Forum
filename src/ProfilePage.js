@@ -301,7 +301,7 @@ function DeleteMod(props) {
 }
 
 function BioContainer(props){
-  const bio = props.bio.trim().length !== 0 ? props.bio.trim() : "This user has not written a bio yet.";
+  const bio = (props.bio && props.bio.trim().length !== 0) ? props.bio.trim() : "This user has not written a bio yet.";
   return (
     <>
     <Box width="60%" align = "center">
