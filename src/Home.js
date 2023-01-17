@@ -225,7 +225,7 @@ export default function Home() {
         <Box>
             <Navbar currentPage="home" />
             <Box align="center">
-                <Button id="toggleButton" colorScheme='teal' onClick={handleToggle} top="0px" margin="10px">
+                <Button id="toggleButton" colorScheme='teal' variant="outline" onClick={handleToggle} top="0px" margin="10px">
                     {btnText}
                 </Button>
             </Box><br />

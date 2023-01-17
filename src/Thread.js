@@ -141,8 +141,8 @@ function ThreadContainer(props) {
                     <>
                         <Divider paddingTop="10px" />
                         <Box display="flex" justifyContent="center" gap="3%" margin="10px">
-                            <Button colorScheme="red" onClick={handleDelete}>Delete Thread</Button>
-                            <Button colorScheme="teal" onClick={() => Navigate("/editThread/" + props.id)}>Edit Thread</Button>
+                            <Button colorScheme="red" variant="outline" onClick={handleDelete}>Delete Thread</Button>
+                            <Button colorScheme="teal" variant="outline" onClick={() => Navigate("/editThread/" + props.id)}>Edit Thread</Button>
                         </Box>
                     </>
                 ) : (<></>)}
@@ -307,7 +307,7 @@ export default function Thread() {
                 <Button onClick={() => setReverse(!reverse)}>{reverse ? <TriangleUpIcon /> : <TriangleDownIcon />}</Button>
             </Box>< br />
             <Box align="center">
-                <Button id="toggleButton" colorScheme='cyan' onClick={handleToggle} top="0px" margin="10px">
+                <Button id="toggleButton" colorScheme='teal' variant="outline" onClick={handleToggle} top="0px" margin="10px">
                     {btnText}
                 </Button>
             </Box>
