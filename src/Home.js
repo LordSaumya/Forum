@@ -99,7 +99,7 @@ function ThreadForm() {
                     </div>
                 </FormControl>
                 <br />
-                <Button type="submit" colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} disabled={isTitleError || isDescError || isTagError}>Post Thread</Button>
+                <Button type="submit" variant="outline" colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} disabled={isTitleError || isDescError || isTagError}>Post Thread</Button>
             </form>
         </Container>
     );
@@ -225,7 +225,7 @@ export default function Home() {
         <Box>
             <Navbar currentPage="home" />
             <Box align="center">
-                <Button id="toggleButton" colorScheme='cyan' onClick={handleToggle} top="0px" margin="10px">
+                <Button id="toggleButton" colorScheme='teal' onClick={handleToggle} top="0px" margin="10px">
                     {btnText}
                 </Button>
             </Box><br />

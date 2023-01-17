@@ -88,8 +88,8 @@ function ThreadForm(props) {
                 </FormControl>
                 <br />
                 <Box display="flex" justifyContent="center" gap="3%">
-                    <Button colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} type="submit" disabled={isTitleError || isDescError || isTagError}>Update Thread</Button>
-                    <Button colorScheme="red" onClick={() => Navigate("/threads/" + props.id, { state: { typeNotification: "changesDiscarded" } })}>Discard changes</Button>
+                    <Button colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} type="submit" disabled={isTitleError || isDescError || isTagError} variant="outline">Update Thread</Button>
+                    <Button colorScheme="red" variant="outline" onClick={() => Navigate("/threads/" + props.id, { state: { typeNotification: "changesDiscarded" } })}>Discard changes</Button>
                 </Box>
             </form>
             <br />

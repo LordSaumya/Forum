@@ -78,7 +78,7 @@ function CommentForm() {
                     {!(isContentError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Nice!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;Please enter a longer comment</FormErrorMessage>)}
                 </FormControl>
                 <br />
-                <Button colorScheme={isContentError ? "grey" : "teal"} type="submit" disabled={isContentError}>Post Comment</Button>
+                <Button colorScheme={isContentError ? "grey" : "teal"} type="submit" variant="outline" disabled={isContentError}>Post Comment</Button>
             </form>
         </Container>
     );
