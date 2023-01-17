@@ -46,12 +46,12 @@ function CommentForm() {
     const handleCreateComment = (event) => {
         if (!isContentError) {
             event.preventDefault();
-            console.log(content);
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ User_id: user_id, forumthread_id: threadID, content: content })
             };
+            console.log(requestOptions);
             fetch('https://highgear.herokuapp.com/forum_threads/' + threadID + "/comments", requestOptions)
                 .then(response => response.json())
                 .then(data => refreshCreate(data))
