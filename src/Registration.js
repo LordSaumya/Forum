@@ -152,7 +152,7 @@ function SignUp() {
                     {!isConfirmPasswordError ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp;Your passwords match</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The passwords must match</FormErrorMessage>)}
                 </FormControl>
                 <br />
-                <Button colorScheme={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError ? "gray" : "teal"} type="submit" disabled={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError}>
+                <Button colorScheme={isEmailError || isUsernameError || isPasswordError || isConfirmPasswordError ? "gray" : "teal"} type="submit">
                     Sign Up
                 </Button>
             </form>
