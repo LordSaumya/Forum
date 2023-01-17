@@ -50,7 +50,7 @@ function CommentForm() {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ User_id: user_id, ForumThread_id: threadID, content: content })
+                body: JSON.stringify({ User_id: user_id, forumthread_id: threadID, content: content })
             };
             fetch('https://highgear.herokuapp.com/forum_threads/' + threadID + "/comments", requestOptions)
                 .then(response => response.json())
