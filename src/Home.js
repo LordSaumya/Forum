@@ -55,8 +55,10 @@ function ThreadForm() {
 
     //Creates thread
     const handleCreateThread = (event) => {
+        setTimeout(() => {
         document.getElementById("createThreadButton").disabled = true;
         document.getElementById("createThreadButton").innerHTML = "Creating...";
+        }, 100);
         event.preventDefault();
         console.log("Creating thread");
         const requestOptions = {
