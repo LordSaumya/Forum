@@ -2,7 +2,7 @@
 webpack_config="./node_modules/react-scripts/config/webpack.config.js"
 webpack_config_backup="./node_modules/react-scripts/config/webpack.config.js.bckp"
 
-line_number=304
+line_number=306
 line_to_add='fallback: { "crypto": require.resolve("crypto-browserify") }, // Patch realm-web crypto dependency'
 
 echo "Fixing realm-web crypto dependency..."
