@@ -25,7 +25,7 @@ function BioForm(props) {
     const Navigate = useNavigate();
     const username = useSelector(state => state.username);
     const [bio, setBio] = useState(props.bio);
-    const isBioError = bio.length > 150 || bio.split("\n").length > 5;
+    const isBioError = bio && (bio.length > 150 || bio.split("\n").length > 5);
     const user_id = useSelector(state => state.id);
 
     //Updates bio
@@ -66,7 +66,7 @@ function BioForm(props) {
             <form onSubmit={handleUpdateBio}>
                 <FormControl isInvalid={isBioError}>
                     <FormLabel>Your bio:</FormLabel>
-                    <Textarea value={bio} onChange={handleBioInput} resize="none" whiteSpace="pre-line"/>
+                    <Textarea value={bio ? bio : ""} onChange={handleBioInput} resize="none" whiteSpace="pre-line"/>
                     {!(isBioError) ? (<FormHelperText color="green.500"><CheckIcon color="green.500" />&nbsp; Lookin' good!</FormHelperText>) : (<FormErrorMessage><WarningIcon color="red.500" />&nbsp;The bio cannot be longer than 150 characters or 5 lines!</FormErrorMessage>)}
                 </FormControl>
                 <Button
