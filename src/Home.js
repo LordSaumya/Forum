@@ -55,6 +55,8 @@ function ThreadForm() {
 
     //Creates thread
     const handleCreateThread = (event) => {
+        document.getElementById("createThreadButton").disabled = true;
+        document.getElementById("createThreadButton").innerHTML = "Creating...";
         event.preventDefault();
         console.log("Creating thread");
         const requestOptions = {
@@ -99,7 +101,7 @@ function ThreadForm() {
                     </div>
                 </FormControl>
                 <br />
-                <Button type="submit" variant="outline" colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} disabled={isTitleError || isDescError || isTagError}>Post Thread</Button>
+                <Button type="submit" variant="outline" id = "submitBtn" colorScheme={isTitleError || isDescError || isTagError ? "grey" : "teal"} disabled={isTitleError || isDescError || isTagError}>Post Thread</Button>
             </form>
         </Container>
     );
