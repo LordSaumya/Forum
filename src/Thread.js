@@ -42,6 +42,7 @@ function CommentForm() {
 
     const user_id = useSelector(state => state.id);
     const threadID = useParams().id;
+    console.log("Thread ID: ",threadID, "User ID: ", user_id, "Content: ", content);
     //Creates new comment
     const handleCreateComment = (event) => {
         if (!isContentError) {
@@ -49,7 +50,7 @@ function CommentForm() {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ User_id: user_id, forumthread_id: parseInt(threadID), content: content })
+                body: JSON.stringify({ User_id: user_id, forumthread_id: threadID, content: content })
             };
             fetch('https://highgear.herokuapp.com/forum_threads/' + threadID + "/comments", requestOptions)
                 .then(response => response.json())
@@ -153,7 +154,6 @@ function ThreadContainer(props) {
 
 //Container for comments
 function CommentContainer(props) {
-    //TODO: Add OP badge
     const Navigate = useNavigate();
     const timeAgo = moment(props.date).fromNow();
     const author = UseFetch("https://highgear.herokuapp.com/users/" + props.user_id);
