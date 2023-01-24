@@ -42,7 +42,7 @@ function CommentForm() {
 
     const user_id = useSelector(state => state.id);
     const threadID = useParams().id;
-    console.log("Thread ID: ",threadID, "User ID: ", user_id, "Content: ", content);
+    // console.log("Thread ID: ", threadID, "User ID: ", user_id, "Content: ", content);
     //Creates new comment
     const handleCreateComment = (event) => {
         if (!isContentError) {

@@ -98,7 +98,8 @@ function ThreadForm(props) {
 }
 
 export default function EditThread() {
-    const accessLevel = useLocation().state.access;
+    let accessLevel = useLocation().state.accessLevel;
+    accessLevel = accessLevel ? accessLevel : "user";
     const Navigate = useNavigate();
     const id = useParams().id;
     const user_id = useSelector(state => state.id);
