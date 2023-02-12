@@ -1,5 +1,7 @@
 # HighGear
 
+BUG [12th February 2023]: A bug has occurred where users are unable to post, view, or edit comments. A fix will be deployed as soon as possible.
+
 Submission for CVWO 2023 by Saumya Shah, A0264785M
 [Final writeup](https://docs.google.com/document/d/1f2wX0CDKO_SHDk1LVjVbsXGcUtazLfoIT0cOV62347k/edit#)
 
